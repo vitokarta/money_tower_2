@@ -32,70 +32,95 @@ public class PleaseProvideControllerClassName {
 
     @FXML
     private Button monkey;
+    @FXML
+    private Button snag; 
+    @FXML
+    private Button bananatree; 
+    @FXML
+    private Button battleship; 
+    @FXML
+    private Button cannon; 
+    @FXML
+    private Button boomerange; 
+    @FXML
+    private Button icemonkey; 
+    @FXML
+    private Button ninjamonkey; 
+    @FXML
+    private Button painter; 
+    @FXML
+    private Button sniper; 
+    @FXML
+    private Button wizmonkey; 
+    @FXML
+    private Button supermonkey; 
 
     @FXML
     private AnchorPane root;
 
     @FXML
     private void initialize() {
-        // 鼠标移动事件，用于移动所有动态创建的ImageView
+        // 鼠標移動事件，用於移動所有動態創建的ImageView
         root.setOnMouseMoved(this::handleMouseMoved);
-        // 处理鼠标点击事件
+        // 處理鼠標點擊事件
         root.setOnMouseClicked(this::handleMouseClicked);
+
+        // 為每個按鈕設置事件處理程序
+        monkey.setOnAction(event -> handleButtonClick("resouce\\monkey.png", 50, 50));
+        snag.setOnAction(event -> handleButtonClick("resouce\\snag.png", 50, 50));
+        bananatree.setOnAction(event -> handleButtonClick("resouce\\bananatree.png", 60, 60));
+        battleship.setOnAction(event -> handleButtonClick("resouce\\battleship.png", 60, 60));
+        cannon.setOnAction(event -> handleButtonClick("resouce\\cannon.png", 50, 50));
+        boomerange.setOnAction(event -> handleButtonClick("resouce\\boomerange.png", 50, 50));
+        icemonkey.setOnAction(event -> handleButtonClick("resouce\\icemonkey.png", 60, 60));
+        ninjamonkey.setOnAction(event -> handleButtonClick("resouce\\ninjamonkey.png", 60, 60)); // 特殊尺寸
+        painter.setOnAction(event -> handleButtonClick("resouce\\painter.png", 60, 60));
+        sniper.setOnAction(event -> handleButtonClick("resouce\\sniper.png", 60, 80)); // 特殊尺寸
+        wizmonkey.setOnAction(event -> handleButtonClick("resouce\\wizmonkey.png", 50, 50));
+        supermonkey.setOnAction(event -> handleButtonClick("resouce\\supermonkey.png", 50, 50));
     }
 
-
-    double imageWidth = 50;  // Desired width
-    double imageHeight = 50; // Desired height
-    @FXML
-    void logouts(ActionEvent event) {
-        
+    private void handleButtonClick(String imagePath, double imageWidth, double imageHeight) {
         Image mapImage = null;
         try {
-            mapImage = new Image(new FileInputStream("resouce\\bloon.png"));
+            mapImage = new Image(new FileInputStream(imagePath));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return;
         }
         ImageView newImageView = new ImageView();
-        //WritableImage image = monkey.snapshot(new SnapshotParameters(), null);
         newImageView.setImage(mapImage);
         newImageView.setFitWidth(imageWidth);
         newImageView.setFitHeight(imageHeight);
         newImageView.setVisible(true);
-        newImageView.toFront(); // 确保图像显示在最前
-        newImageView.setLayoutX(monkey.getLayoutX() + 50 );  // 设置新图像的初始位置
-        newImageView.setLayoutY(monkey.getLayoutY() + 50 );
-        //newImageView.add
+        newImageView.toFront(); // 確保圖像顯示在最前
+        newImageView.setLayoutX(monkey.getLayoutX() + 50);  // 設置新圖像的初始位置（根據需要調整）
+        newImageView.setLayoutY(monkey.getLayoutX() + 50);
         root.getChildren().add(newImageView);
         currentlyFollowing = newImageView;
-    
-        System.out.println("Click on monkey");
+
+        System.out.println("Click on button, loading image: " + imagePath);
     }
 
     private void handleMouseMoved(MouseEvent event) {
-        // 确保在UI线程上执行
-        if (currentlyFollowing != null) { // 仅当存在正在跟随的ImageView时更新位置
+        // 確保在UI線程上執行
+        if (currentlyFollowing != null) { // 僅當存在正在跟隨的ImageView時更新位置
             Platform.runLater(() -> {
-                currentlyFollowing.setLayoutX(event.getX() -imageWidth / 2);
-                currentlyFollowing.setLayoutY(event.getY() -imageHeight / 2);
-                //- currentlyFollowing.getImage().getWidth() / 2
-                //- currentlyFollowing.getImage().getHeight() / 2
+                currentlyFollowing.setLayoutX(event.getX() - currentlyFollowing.getFitWidth() / 2);
+                currentlyFollowing.setLayoutY(event.getY() - currentlyFollowing.getFitHeight() / 2);
                 System.out.println(event.getX() + " " + event.getY());
-                if(event.getX()>950 && event.getY()<50) {
+                if (event.getX() > 950 && event.getY() < 50) {
                     currentlyFollowing.setVisible(false);
-                    currentlyFollowing = null; // 停止跟随
+                    currentlyFollowing = null; // 停止跟隨
                 }
             });
         }
     }
 
     private void handleMouseClicked(MouseEvent event) {
-
-        if (currentlyFollowing != null) { // 检测鼠标左键
+        if (currentlyFollowing != null) { // 檢測鼠標左鍵
             System.out.println("click");
-            //currentlyFollowing.setVisible(false);
-            currentlyFollowing = null; // 停止跟随
+            currentlyFollowing = null; // 停止跟隨
         }
     }
 }
