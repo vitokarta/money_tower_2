@@ -1,6 +1,7 @@
 package com.example;
 
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
@@ -28,7 +29,8 @@ public class PleaseProvideControllerClassName {
 
     @FXML
     private ImageView imageView = new ImageView();
-    private ImageView currentlyFollowing;
+    //private ImageView currentlyFollowing;
+    private StackPane currentlyFollowing;
 
     @FXML
     private Button monkey;
@@ -47,10 +49,24 @@ public class PleaseProvideControllerClassName {
 
     double imageWidth = 50;  // Desired width
     double imageHeight = 50; // Desired height
+    tower newTower;
     @FXML
     void logouts(ActionEvent event) {
         
-        Image mapImage = null;
+        String imagePath = "resouce\\bloon.png";
+        newTower = new tower(root,imagePath);
+        
+        // Set the image width and height as needed
+        
+        // Place the tower centered at an offset from the monkey button
+        double x = monkey.getLayoutX();
+        double y = monkey.getLayoutY();
+        
+        newTower.placeTower(root, x, y);
+        //currentlyFollowing = newTower.getTowerImageView();
+        currentlyFollowing = newTower.getTowerPane();
+        
+        /*Image mapImage = null;
         try {
             mapImage = new Image(new FileInputStream("resouce\\bloon.png"));
         } catch (FileNotFoundException e) {
@@ -68,7 +84,8 @@ public class PleaseProvideControllerClassName {
         newImageView.setLayoutY(monkey.getLayoutY() + 50 );
         //newImageView.add
         root.getChildren().add(newImageView);
-        currentlyFollowing = newImageView;
+        currentlyFollowing = newImageView;*/
+        
     
         System.out.println("Click on monkey");
     }
@@ -77,10 +94,10 @@ public class PleaseProvideControllerClassName {
         // 确保在UI线程上执行
         if (currentlyFollowing != null) { // 仅当存在正在跟随的ImageView时更新位置
             Platform.runLater(() -> {
-                currentlyFollowing.setLayoutX(event.getX() -imageWidth / 2);
-                currentlyFollowing.setLayoutY(event.getY() -imageHeight / 2);
-                //- currentlyFollowing.getImage().getWidth() / 2
-                //- currentlyFollowing.getImage().getHeight() / 2
+                currentlyFollowing.setLayoutX(event.getX() -100);
+                currentlyFollowing.setLayoutY(event.getY() -100);
+                //currentlyFollowing.setLayoutX(event.getX() -newTower.rangeRadius/2);
+                //currentlyFollowing.setLayoutY(event.getY() -newTower.rangeRadius/2);
                 System.out.println(event.getX() + " " + event.getY());
                 if(event.getX()>950 && event.getY()<50) {
                     currentlyFollowing.setVisible(false);
@@ -95,7 +112,14 @@ public class PleaseProvideControllerClassName {
         if (currentlyFollowing != null) { // 检测鼠标左键
             System.out.println("click");
             //currentlyFollowing.setVisible(false);
+            newTower.getTowerImageRange().setVisible(false);;
             currentlyFollowing = null; // 停止跟随
         }
+
+        if (newTower.button != null) { // 检测鼠标左键
+            newTower.button.setVisible(false);
+        }
+
+
     }
 }

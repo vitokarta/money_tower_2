@@ -17,7 +17,7 @@ public class test extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("scene.fxml")); //載入fxml檔，所有UI介面設定都在
                                                                                                                                    //fxml檔裡
         Scene scene = new Scene(root);
-      
+        
         
         stage.setScene(scene);
         stage.show();
