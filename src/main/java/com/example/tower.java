@@ -26,7 +26,10 @@ public class tower {
 	public int attackDelayTick;
 	public int moneyRate;
 
-    public tower(AnchorPane root,String imagePath) {
+	public double imageheight;
+	public double imagewidth;
+
+    public tower(AnchorPane root,String imagePath ,double imageWidth, double imageHeight) {
         if (imagePath.equals("resouce\\monkey.png")) {
 			attackPower = 1;
 			rangeRadius = 200; //medium
@@ -35,7 +38,7 @@ public class tower {
 			attackDelayTick = 29;
 			projectileSpeed = 5; //fast
 		}
-		else if (imagePath.equals("resouce\\snag")) {
+		else if (imagePath.equals("resouce\\snag.png")) {
 			attackPower = 1;
 			rangeRadius = 150; //short
 			costValue = 250;
@@ -110,7 +113,7 @@ public class tower {
 		}
 		else if (imagePath.equals("resouce\\bananatree.png")) {
 			attackPower = 0;
-			rangeRadius = 30;
+			rangeRadius = 60;
 			costValue = 750;
 			sellValue = costValue /2;
 			attackDelayTick = 500;
@@ -135,15 +138,18 @@ public class tower {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+		imageheight = imageHeight;
+		imagewidth = imageWidth;
 
 		towerPane = new StackPane();
-        towerImageView.setFitWidth(50);
-        towerImageView.setFitHeight(50);
+        towerImageView.setFitWidth(imageWidth);
+        towerImageView.setFitHeight(imageHeight);
         towerImageRange.setFitWidth(rangeRadius);
         towerImageRange.setFitHeight(rangeRadius);
         towerImageRange.setOpacity(0.8);
-		towerPane.setMinWidth(rangeRadius);
-        towerPane.setMinHeight(rangeRadius);
+		
+		//towerPane.setMinWidth(rangeRadius);
+        //towerPane.setMinHeight(rangeRadius);
 		//towerPane.setMouseTransparent(false);
 		//towerImageRange.setMouseTransparent(true);
         /*newTower.getTowerPane().setPrefWidth(newTower.rangeRadius);
@@ -156,7 +162,9 @@ public class tower {
         button = new Button("sure");
         button.setLayoutX(0);
         button.setLayoutY(0);
-        towerPane.setOnMouseClicked(event -> {
+		button.setUserData(this);
+		root.getChildren().add(button);
+        /*towerPane.setOnMouseClicked(event -> {
 
             double clickX = event.getX();
             double clickY = event.getY();
@@ -167,17 +175,25 @@ public class tower {
 
             if(clickX >= imageViewX && clickX <= imageViewX + imageViewWidth &&
             clickY >= imageViewY && clickY <= imageViewY + imageViewHeight){
-                
+				/*if (root.getChildren().contains(button)) {
+                    root.getChildren().remove(button);
+                }
+				//towerPane.getChildren().add(towerImageRange);
+				//towerImageRange.setMouseTransparent(true);
                 button.setVisible(true);
-                root.getChildren().add(button);
+                
             }
-        });
+        });*/
+		
         button.setOnAction(event1 -> {
             AnchorPane parent = (AnchorPane) towerPane.getParent();
             if (parent != null) {
-            parent.getChildren().remove(towerPane);
-            root.getChildren().remove(button);
-        }
+				parent.getChildren().remove(towerPane);
+				/*while(root.getChildren().contains(button))
+					root.getChildren().remove(button);*/
+				button.setVisible(false);
+				PleaseProvideControllerClassName.removeTower(this); // 移除 tower 实例
+        	}
         });
     }
 
@@ -193,17 +209,6 @@ public class tower {
     }
 
     public void placeTower(AnchorPane root, double x, double y) {
-        /*imageWidth=100;
-        imageHeight=100;
-        towerImageView.setOpacity(0.8);
-        towerImageView.setFitWidth(imageWidth);
-        towerImageView.setFitHeight(imageHeight);
-        towerImageView.setVisible(true);
-        towerImageView.toFront();
-        //towerImageView.setLayoutX(x - imageWidth / 2);  // Center the image
-        //towerImageView.setLayoutY(y - imageHeight / 2);
-        /*root.getChildren().add(towerImageView);*/
-
         towerPane.setLayoutX(x);  // Center the pane (assuming width and height are 100)
         towerPane.setLayoutY(y);
         root.getChildren().add(towerPane);

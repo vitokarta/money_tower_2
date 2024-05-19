@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -60,6 +62,9 @@ public class PleaseProvideControllerClassName {
     @FXML
     private AnchorPane root;
 
+    private static List<tower> towers = new ArrayList<>();
+    
+
     @FXML
     private void initialize() {
         // 鼠標移動事件，用於移動所有動態創建的ImageView
@@ -85,35 +90,13 @@ public class PleaseProvideControllerClassName {
     tower newTower;
     private void handleButtonClick(String imagePath, double imageWidth, double imageHeight) {
 
-        newTower = new tower(root,imagePath);
-        
-        // Set the image width and height as needed
-        
-        // Place the tower centered at an offset from the monkey button
-        double x = monkey.getLayoutX();
+        newTower = new tower(root,imagePath,imageWidth,imageHeight);
+        towers.add(newTower);
+        double x = monkey.getLayoutX()-100000;
         double y = monkey.getLayoutY();
         
-        newTower.placeTower(root, x, y);
-        //currentlyFollowing = newTower.getTowerImageView();
+        newTower.placeTower(root, x, y  );
         currentlyFollowing = newTower.getTowerPane();
-
-        /*Image mapImage = null;
-        try {
-            mapImage = new Image(new FileInputStream(imagePath));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
-        ImageView newImageView = new ImageView();
-        newImageView.setImage(mapImage);
-        newImageView.setFitWidth(imageWidth);
-        newImageView.setFitHeight(imageHeight);
-        newImageView.setVisible(true);
-        newImageView.toFront(); // 確保圖像顯示在最前
-        newImageView.setLayoutX(monkey.getLayoutX() + 50);  // 設置新圖像的初始位置（根據需要調整）
-        newImageView.setLayoutY(monkey.getLayoutX() + 50);
-        root.getChildren().add(newImageView);
-        currentlyFollowing = newImageView;*/
 
         System.out.println("Click on button, loading image: " + imagePath);
     }
@@ -137,17 +120,75 @@ public class PleaseProvideControllerClassName {
 
         if (currentlyFollowing != null) { // 检测鼠标左键
             System.out.println("click");
-            //currentlyFollowing.setVisible(false);
-            newTower.getTowerImageRange().setVisible(false);
-            //newTower.getTowerImageRange().toBack();
             currentlyFollowing.getChildren().removeAll(newTower.getTowerImageRange());
+            currentlyFollowing.setLayoutX(event.getX() -newTower.imagewidth/2);
+            currentlyFollowing.setLayoutY(event.getY() -newTower.imageheight/2);
             currentlyFollowing = null; // 停止跟随
         }
+        else
+        {
+            double clickX = event.getX();
+            double clickY = event.getY();
 
-        if (newTower.button != null) { // 检测鼠标左键
+            boolean clickedOnTower = false;
+            for (tower t : towers) {
+                double imageViewX = t.getTowerPane().getLayoutX();
+                double imageViewY = t.getTowerPane().getLayoutY();
+                double imageViewWidth = t.getTowerImageView().getFitWidth();
+                double imageViewHeight = t.getTowerImageView().getFitHeight();
+
+                if(clickX >= imageViewX && clickX <= imageViewX + imageViewWidth &&
+                clickY >= imageViewY && clickY <= imageViewY + imageViewHeight){
+                    for (tower t2 : towers) {
+                        if(t2.getTowerPane().getChildren().contains(t2.getTowerImageRange()))
+                        {
+                            t2.getTowerPane().getChildren().remove(t2.getTowerImageRange());
+                            t2.getTowerPane().setLayoutX(t2.getTowerPane().getLayoutX() + t2.rangeRadius / 2 - t2.imagewidth/2);
+                            t2.getTowerPane().setLayoutY(t2.getTowerPane().getLayoutY() + t2.rangeRadius / 2 - t2.imageheight/2);
+                            t2.button.setVisible(false);
+                        }
+                    }
+                    clickedOnTower = true;
+                    t.button.setVisible(true);
+                    if(!t.getTowerPane().getChildren().contains(t.getTowerImageRange()))
+                    {
+                        t.getTowerPane().getChildren().add(t.getTowerImageRange());
+                        t.getTowerImageRange().toBack();
+                        t.getTowerImageRange().setVisible(true);
+                        t.getTowerPane().setLayoutX(t.getTowerPane().getLayoutX() - t.rangeRadius / 2 + t.imagewidth/2);
+                        t.getTowerPane().setLayoutY(t.getTowerPane().getLayoutY() - t.rangeRadius / 2 + t.imageheight/2);
+                    }
+                    System.out.println("click");
+                    break;
+                }
+                else
+                {
+                    if(t.getTowerPane().getChildren().contains(t.getTowerImageRange()))
+                    {
+                        t.getTowerPane().getChildren().remove(t.getTowerImageRange());
+                        t.getTowerPane().setLayoutX(t.getTowerPane().getLayoutX() + t.rangeRadius / 2 - t.imagewidth/2);
+                        t.getTowerPane().setLayoutY(t.getTowerPane().getLayoutY() + t.rangeRadius / 2 - t.imageheight/2);
+                    }
+                }
+            }
+            if (!clickedOnTower) {
+                for (tower t : towers) {
+                    t.button.setVisible(false);
+                }
+            }
+        }
+        
+
+        /*if (newTower.button != null) { // 检测鼠标左键
             newTower.button.setVisible(false);
         }
+        if(root.getChildren().contains(tower.button)) {
+            tower.button.setVisible(false);
+            //root.getChildren().remove(tower.button);
+        }*/
 
-
+    }
+    public static void removeTower(tower t) {
+        towers.remove(t);
     }
 }
