@@ -29,6 +29,9 @@ public class tower {
 	public double imageheight;
 	public double imagewidth;
 
+	private Image Image2;
+	private Image Image3;
+
     public tower(AnchorPane root,String imagePath ,double imageWidth, double imageHeight) {
         if (imagePath.equals("resouce\\monkey.png")) {
 			attackPower = 1;
@@ -132,7 +135,8 @@ public class tower {
 
         try {
             Image Image1 = new Image(new FileInputStream(imagePath));
-            Image Image2 = new Image(new FileInputStream("resouce\\range.png"));
+            Image2 = new Image(new FileInputStream("resouce\\range.png"));
+			Image3 = new Image(new FileInputStream("resouce\\red_range.png"));
             towerImageView = new ImageView(Image1);
             towerImageRange = new ImageView(Image2);
         } catch (FileNotFoundException e) {
@@ -164,33 +168,11 @@ public class tower {
         button.setLayoutY(0);
 		button.setUserData(this);
 		root.getChildren().add(button);
-        /*towerPane.setOnMouseClicked(event -> {
-
-            double clickX = event.getX();
-            double clickY = event.getY();
-            double imageViewX = towerImageView.getLayoutX();
-            double imageViewY = towerImageView.getLayoutY();
-            double imageViewWidth = towerImageView.getFitWidth();
-            double imageViewHeight = towerImageView.getFitHeight();
-
-            if(clickX >= imageViewX && clickX <= imageViewX + imageViewWidth &&
-            clickY >= imageViewY && clickY <= imageViewY + imageViewHeight){
-				/*if (root.getChildren().contains(button)) {
-                    root.getChildren().remove(button);
-                }
-				//towerPane.getChildren().add(towerImageRange);
-				//towerImageRange.setMouseTransparent(true);
-                button.setVisible(true);
-                
-            }
-        });*/
 		
         button.setOnAction(event1 -> {
             AnchorPane parent = (AnchorPane) towerPane.getParent();
             if (parent != null) {
 				parent.getChildren().remove(towerPane);
-				/*while(root.getChildren().contains(button))
-					root.getChildren().remove(button);*/
 				button.setVisible(false);
 				PleaseProvideControllerClassName.removeTower(this); // 移除 tower 实例
         	}
@@ -207,10 +189,18 @@ public class tower {
     public StackPane getTowerPane() {
         return towerPane;
     }
+	public void switchToImage2() {
+        towerImageRange.setImage(Image2);
+    }
+	public void switchToImage3() {
+        towerImageRange.setImage(Image3);
+    }
 
     public void placeTower(AnchorPane root, double x, double y) {
         towerPane.setLayoutX(x);  // Center the pane (assuming width and height are 100)
         towerPane.setLayoutY(y);
         root.getChildren().add(towerPane);
     }
+
+	
 }

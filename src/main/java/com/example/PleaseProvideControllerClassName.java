@@ -63,8 +63,7 @@ public class PleaseProvideControllerClassName {
     private AnchorPane root;
 
     private static List<tower> towers = new ArrayList<>();
-    
-
+    private ManualMap manualMap = new ManualMap("resouce\\map1.jpg");
     @FXML
     private void initialize() {
         // 鼠標移動事件，用於移動所有動態創建的ImageView
@@ -107,9 +106,16 @@ public class PleaseProvideControllerClassName {
             Platform.runLater(() -> {
                 currentlyFollowing.setLayoutX(event.getX() -newTower.rangeRadius/2);
                 currentlyFollowing.setLayoutY(event.getY() -newTower.rangeRadius/2);
+                if(manualMap.isPositionPlaceable((int)event.getX(), (int) event.getY()))
+                    newTower.switchToImage2();
+                else
+                    newTower.switchToImage3();
                 System.out.println(event.getX() + " " + event.getY());
                 if (event.getX() > 950 && event.getY() < 50) {
-                    currentlyFollowing.setVisible(false);
+                    towers.remove(newTower);
+                    newTower.button.setVisible(false);
+                    root.getChildren().remove(newTower.getTowerPane());
+                    //currentlyFollowing.setVisible(false);
                     currentlyFollowing = null; // 停止跟隨
                 }
             });
@@ -120,10 +126,26 @@ public class PleaseProvideControllerClassName {
 
         if (currentlyFollowing != null) { // 检测鼠标左键
             System.out.println("click");
-            currentlyFollowing.getChildren().removeAll(newTower.getTowerImageRange());
-            currentlyFollowing.setLayoutX(event.getX() -newTower.imagewidth/2);
-            currentlyFollowing.setLayoutY(event.getY() -newTower.imageheight/2);
-            currentlyFollowing = null; // 停止跟随
+            if(manualMap.isPositionPlaceable((int)event.getX(), (int) event.getY()))
+            {
+                
+                currentlyFollowing.getChildren().removeAll(newTower.getTowerImageRange());
+                currentlyFollowing.setLayoutX(event.getX() -newTower.imagewidth/2);
+                currentlyFollowing.setLayoutY(event.getY() -newTower.imageheight/2);
+                currentlyFollowing = null; // 停止跟随
+
+                for(int y=0;y<newTower.imageheight;y++)
+                {
+                    for(int x=0;x<newTower.imagewidth;x++)
+                    {
+                        int y1=(int)event.getY()-(int)newTower.imageheight/2+y;
+                        int x1=(int)event.getX()-(int)newTower.imagewidth/2+x;
+                        if(y1>0&&x1>0&&y1<manualMap.grid.length&&x1<manualMap.grid[0].length)
+                            manualMap.grid[y1][x1] =0;
+                    }
+                }
+            }
+            
         }
         else
         {
@@ -157,6 +179,7 @@ public class PleaseProvideControllerClassName {
                         t.getTowerImageRange().setVisible(true);
                         t.getTowerPane().setLayoutX(t.getTowerPane().getLayoutX() - t.rangeRadius / 2 + t.imagewidth/2);
                         t.getTowerPane().setLayoutY(t.getTowerPane().getLayoutY() - t.rangeRadius / 2 + t.imageheight/2);
+                        t.button.toFront();
                     }
                     System.out.println("click");
                     break;
