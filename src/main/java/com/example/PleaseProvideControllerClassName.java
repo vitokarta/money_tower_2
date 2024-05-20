@@ -106,7 +106,7 @@ public class PleaseProvideControllerClassName {
             Platform.runLater(() -> {
                 currentlyFollowing.setLayoutX(event.getX() -newTower.rangeRadius/2);
                 currentlyFollowing.setLayoutY(event.getY() -newTower.rangeRadius/2);
-                if(manualMap.isPositionPlaceable((int)event.getX(), (int) event.getY()))
+                if(manualMap.isPositionPlaceable(newTower.imagePath,(int)event.getX(), (int) event.getY()))
                     newTower.switchToImage2();
                 else
                     newTower.switchToImage3();
@@ -126,7 +126,7 @@ public class PleaseProvideControllerClassName {
 
         if (currentlyFollowing != null) { // 检测鼠标左键
             System.out.println("click");
-            if(manualMap.isPositionPlaceable((int)event.getX(), (int) event.getY()))
+            if(manualMap.isPositionPlaceable(newTower.imagePath,(int)event.getX(), (int) event.getY()))
             {
                 
                 currentlyFollowing.getChildren().removeAll(newTower.getTowerImageRange());

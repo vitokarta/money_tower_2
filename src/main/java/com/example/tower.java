@@ -131,6 +131,7 @@ public class tower {
 			attackDelayTick = 15;
 			projectileSpeed = 3;
 		}
+		this.imagePath=imagePath;
 
 
         try {
@@ -175,6 +176,8 @@ public class tower {
 				parent.getChildren().remove(towerPane);
 				button.setVisible(false);
 				PleaseProvideControllerClassName.removeTower(this); // 移除 tower 实例
+				ManualMap.restoreMap(this);
+				System.out.println(this.imagePath);
         	}
         });
     }
