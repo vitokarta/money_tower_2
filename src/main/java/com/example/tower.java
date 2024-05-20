@@ -1,5 +1,6 @@
 package com.example;
 
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -131,7 +132,7 @@ public class tower {
 			attackDelayTick = 15;
 			projectileSpeed = 3;
 		}
-
+		this.imagePath= imagePath;
 
         try {
             Image Image1 = new Image(new FileInputStream(imagePath));
@@ -163,7 +164,7 @@ public class tower {
         
         towerPane.getChildren().addAll(towerImageRange, towerImageView); // Add both images to the StackPane
 
-        button = new Button("sure");
+        button = new Button("sell");
         button.setLayoutX(0);
         button.setLayoutY(0);
 		button.setUserData(this);
@@ -175,6 +176,9 @@ public class tower {
 				parent.getChildren().remove(towerPane);
 				button.setVisible(false);
 				PleaseProvideControllerClassName.removeTower(this); // 移除 tower 实例
+				ManualMap.restoreMap(this);
+				System.out.println(this.imagePath);
+				PleaseProvideControllerClassName.getInstance().increaseMoneyByAmount(this.sellValue); // 增加金錢數值
         	}
         });
     }
@@ -200,7 +204,25 @@ public class tower {
         towerPane.setLayoutX(x);  // Center the pane (assuming width and height are 100)
         towerPane.setLayoutY(y);
         root.getChildren().add(towerPane);
+		PleaseProvideControllerClassName.getInstance().decreaseMoneyByAmount(this.costValue); // 花錢買猴
     }
+	public void rotateTowards(double targetX, double targetY) {
+		double x;
+		double y;
+		
+		if(towerPane.getChildren().contains(towerImageRange)){
+			x=towerPane.getLayoutX()+ rangeRadius / 2;
+			y=towerPane.getLayoutY()+ rangeRadius / 2;
+		}
+		else{
+			x=towerPane.getLayoutX()+ towerImageView.getFitWidth()/2;
+			y=towerPane.getLayoutY()+ towerImageView.getFitHeight()/2;
 
-	
+		}
+        double deltaX = targetX - x;
+        double deltaY = targetY - y;
+        double angle = Math.toDegrees(Math.atan2(deltaY, deltaX)) + 90;
+		System.out.println(angle);
+        Platform.runLater(() -> towerImageView.setRotate(angle));
+    }
 }

@@ -33,25 +33,53 @@
 -->
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <VBox prefHeight="600.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.PleaseProvideControllerClassName">
   <children>
     <AnchorPane fx:id="root" maxHeight="-1.0" maxWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-            <ImageView fitHeight="600.0" fitWidth="205.0" layoutX="523.0" layoutY="-3.0" pickOnBounds="true" AnchorPane.bottomAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ImageView fitHeight="600.0" fitWidth="205.0" layoutX="847.0" layoutY="3.0" pickOnBounds="true" AnchorPane.topAnchor="0.0">
                <image>
                   <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/sidebar.jpg" />
                </image>
             </ImageView>
-            <ImageView fitHeight="643.0" fitWidth="879.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="6.327050781250023" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ImageView fitHeight="643.0" fitWidth="879.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                <image>
                   <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/file_Object%20Removal.jpg" />
                </image>
             </ImageView>
+            <ImageView fitHeight="60.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/hp.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="healthLabel" layoutX="71.0" layoutY="9.0" prefHeight="41.0" prefWidth="79.0" styleClass="shadow-text" text="test" textFill="WHITE">
+               <font>
+                  <Font name="Arial Black" size="20.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="46.0" fitWidth="41.0" layoutX="164.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/coins.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="moneyLabel" layoutX="222.0" layoutY="8.0" prefHeight="42.0" prefWidth="79.0" styleClass="shadow-text" text="test" textFill="WHITE">
+               <font>
+                  <Font name="Arial Black" size="20.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="34.0" fitWidth="70.0" layoutX="775.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="roundLabel" layoutX="772.0" layoutY="4.0" prefHeight="60.0" prefWidth="106.0" styleClass="shadow-text" textFill="WHITE">
+               <font>
+                  <Font name="Arial Black" size="20.0" />
+               </font>
+            </Label>
             <Button fx:id="bananatree" layoutX="965.0" layoutY="425.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0">
                <graphic>
                   <ImageView fitHeight="50.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">

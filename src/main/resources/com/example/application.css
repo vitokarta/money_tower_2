@@ -1,0 +1,6 @@
+.shadow-text {
+    -fx-font-size: 20px;
+    -fx-font-family: 'Arial Black';
+    -fx-text-fill: white; /* 文字颜色 */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.9),6,0.5,2,4); /* 字體陰影深度 */
+}
