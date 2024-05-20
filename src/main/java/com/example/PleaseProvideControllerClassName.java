@@ -3,6 +3,11 @@ package com.example;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import javafx.util.Duration;
+
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,6 +15,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -33,7 +41,9 @@ public class PleaseProvideControllerClassName {
     private ImageView imageView = new ImageView();
     //private ImageView currentlyFollowing;
     private StackPane currentlyFollowing;
-
+    @FXML
+    private Button start;
+    
     @FXML
     private Button monkey;
     @FXML
@@ -64,13 +74,16 @@ public class PleaseProvideControllerClassName {
 
     private static List<tower> towers = new ArrayList<>();
     
-
+    
     @FXML
     private void initialize() {
         // 鼠標移動事件，用於移動所有動態創建的ImageView
         root.setOnMouseMoved(this::handleMouseMoved);
         // 處理鼠標點擊事件
         root.setOnMouseClicked(this::handleMouseClicked);
+        
+        //start
+        start.setOnAction(event -> bloonStart());
 
         // 為每個按鈕設置事件處理程序
         monkey.setOnAction(event -> handleButtonClick("resouce\\monkey.png", 50, 50));
@@ -85,6 +98,17 @@ public class PleaseProvideControllerClassName {
         sniper.setOnAction(event -> handleButtonClick("resouce\\sniper.png", 60, 80)); // 特殊尺寸
         wizmonkey.setOnAction(event -> handleButtonClick("resouce\\wizmonkey.png", 50, 50));
         supermonkey.setOnAction(event -> handleButtonClick("resouce\\supermonkey.png", 50, 50));
+    }
+
+    bloon bloons= new bloon();
+    private void bloonStart(){
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(500), event -> {
+            bloons.Bloon_Generate(root);
+        }));
+        timeline.setCycleCount(10); // Set the number of iterations
+        timeline.play();
+        //bloons.Bloon_Generate(root);
+
     }
 
     tower newTower;
