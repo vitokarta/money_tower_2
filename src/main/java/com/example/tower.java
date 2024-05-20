@@ -135,7 +135,7 @@ public class tower {
 
 
         try {
-            Image Image1 = new Image(new FileInputStream("resouce\\bullet\\glue.png"));
+            Image Image1 = new Image(new FileInputStream(imagePath));
             Image2 = new Image(new FileInputStream("resouce\\range.png"));
 			Image3 = new Image(new FileInputStream("resouce\\red_range.png"));
             towerImageView = new ImageView(Image1);
