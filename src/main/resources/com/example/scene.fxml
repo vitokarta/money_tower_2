@@ -38,25 +38,123 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.PleaseProvideControllerClassName">
+<VBox prefHeight="600.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.PleaseProvideControllerClassName">
   <children>
     <AnchorPane fx:id="root" maxHeight="-1.0" maxWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
             <ImageView fitHeight="600.0" fitWidth="205.0" layoutX="523.0" layoutY="-3.0" pickOnBounds="true" AnchorPane.bottomAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <image>
-                  <Image url="file:/C:/java/project/money_tower_2/resouce/sidebar.jpg" />
+                  <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/sidebar.jpg" />
                </image>
             </ImageView>
-            <ImageView fitHeight="643.0" fitWidth="879.0" layoutX="4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ImageView fitHeight="643.0" fitWidth="879.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="6.327050781250023" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                <image>
-                  <Image url="file:/C:/java/project/money_tower_2/resouce/file.jpg" />
+                  <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/file_Object%20Removal.jpg" />
                </image>
             </ImageView>
-            <Button fx:id="monkey" contentDisplay="GRAPHIC_ONLY" layoutX="886.0" layoutY="96.0" mnemonicParsing="false" onAction="#logouts" prefHeight="51.0" prefWidth="51.0" text="Button">
+            <Button fx:id="bananatree" layoutX="965.0" layoutY="425.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0">
                <graphic>
-                  <ImageView fx:id="imageview" fitHeight="44.0" fitWidth="115.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="50.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="file:/C:/java/project/money_tower_2/resouce/bloon.png" />
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/bananatree.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="supermonkey" layoutX="965.0" layoutY="355.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0">
+               <graphic>
+                  <ImageView fitHeight="44.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/supermonkey.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="sniper" layoutX="967.0" layoutY="286.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0">
+               <graphic>
+                  <ImageView fitHeight="52.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/sniper.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="cannon" layoutX="967.0" layoutY="218.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0">
+               <graphic>
+                  <ImageView fitHeight="44.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/cannon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="battleship" layoutX="879.0" layoutY="425.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0">
+               <graphic>
+                  <ImageView fitHeight="50.0" fitWidth="49.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/battleship.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="wizmonkey" layoutX="879.0" layoutY="355.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0">
+               <graphic>
+                  <ImageView fitHeight="44.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/wizmonkey.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="icemonkey" layoutX="879.0" layoutY="218.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0">
+               <graphic>
+                  <ImageView fitHeight="51.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/icemonkey.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="painter" layoutX="879.0" layoutY="286.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0">
+               <graphic>
+                  <ImageView fitHeight="50.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/painter.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="boomerange" layoutX="967.0" layoutY="150.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0">
+               <graphic>
+                  <ImageView fitHeight="44.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/boomerange.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="ninjamonkey" layoutX="879.0" layoutY="150.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0">
+               <graphic>
+                  <ImageView fitHeight="51.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/ninjamonkey.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Button fx:id="snag" contentDisplay="GRAPHIC_ONLY" layoutX="967.0" layoutY="81.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0" text="Button">
+               <graphic>
+                  <ImageView fitHeight="44.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/snag.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="monkey" contentDisplay="GRAPHIC_ONLY" layoutX="879.0" layoutY="81.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0" text="Button">
+               <graphic>
+                  <ImageView fx:id="imageview" fitHeight="44.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/monkey.png" />
                      </image>
                   </ImageView>
                </graphic>
