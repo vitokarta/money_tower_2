@@ -8,13 +8,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javafx.util.Duration;
 
-
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -99,16 +100,49 @@ public class PleaseProvideControllerClassName {
         wizmonkey.setOnAction(event -> handleButtonClick("resouce\\wizmonkey.png", 50, 50));
         supermonkey.setOnAction(event -> handleButtonClick("resouce\\supermonkey.png", 50, 50));
     }
-
+    private int total;
+    private List<String> types = new ArrayList<>();
+    private List<Integer> amounts = new ArrayList<>();
+    private int currentIndex = 0;
     bloon bloons= new bloon();
     private void bloonStart(){
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(500), event -> {
-            bloons.Bloon_Generate(root);
-        }));
-        timeline.setCycleCount(10); // Set the number of iterations
-        timeline.play();
         //bloons.Bloon_Generate(root);
+        Scanner scanner;
+        try {
+            scanner = new Scanner(new File("resouce//stage1.txt"));
+            total = scanner.nextInt();
+            while (scanner.hasNext()) {
+                String type = scanner.next();
+                int amount = scanner.nextInt();
+                types.add(type);
+                amounts.add(amount);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        int delays = 6000/total;
+        if (!types.isEmpty() && !amounts.isEmpty()) {
+            playNextAnimation(root, delays);
+        }
+    }
 
+    private void playNextAnimation(AnchorPane root, int delay) {
+        if (currentIndex < types.size()) {
+            String type = types.get(currentIndex);
+            int amount = amounts.get(currentIndex);
+
+            Timeline timeline = new Timeline(new KeyFrame(Duration.millis(delay), event -> {
+                bloons.showBloon(root, type);
+            }));
+            timeline.setCycleCount(amount);
+
+            timeline.setOnFinished(event -> {
+                currentIndex++;
+                playNextAnimation(root, delay); // 递归调用，播放下一个动画
+            });
+
+            timeline.play();
+        }
     }
 
     tower newTower;

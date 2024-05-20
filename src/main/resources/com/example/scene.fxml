@@ -52,11 +52,6 @@
                   <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/file_Object%20Removal.jpg" />
                </image>
             </ImageView>
-            <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="100.0" layoutY="100.0">
-               <image>
-                  <Image url="file:/C:/Users/maste/OneDrive/桌面/JAVA_project/money_tower_2/resouce/sidebar.jpg" />
-               </image>
-            </ImageView>
             <Button fx:id="bananatree" layoutX="965.0" layoutY="425.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0">
                <graphic>
                   <ImageView fitHeight="50.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
