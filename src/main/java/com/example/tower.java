@@ -16,7 +16,7 @@ public class tower {
     private StackPane towerPane;
     public Button button;
 
-    public String imagePath;
+    public String towerType;
 	public int attackPower;
 	public int rangeRadius;
 	public int width;
@@ -132,7 +132,7 @@ public class tower {
 			attackDelayTick = 15;
 			projectileSpeed = 3;
 		}
-		this.imagePath= imagePath;
+		this.towerType=getName(imagePath);
 
         try {
             Image Image1 = new Image(new FileInputStream(imagePath));
@@ -152,13 +152,7 @@ public class tower {
         towerImageRange.setFitWidth(rangeRadius);
         towerImageRange.setFitHeight(rangeRadius);
         towerImageRange.setOpacity(0.8);
-		
-		//towerPane.setMinWidth(rangeRadius);
-        //towerPane.setMinHeight(rangeRadius);
-		//towerPane.setMouseTransparent(false);
-		//towerImageRange.setMouseTransparent(true);
-        /*newTower.getTowerPane().setPrefWidth(newTower.rangeRadius);
-        newTower.getTowerPane().setPrefHeight(newTower.rangeRadius);*/
+	
 
         
         
@@ -177,12 +171,12 @@ public class tower {
 				button.setVisible(false);
 				Controller.removeTower(this); // 移除 tower 实例
 				ManualMap.restoreMap(this);
-				System.out.println(this.imagePath);
+				System.out.println(this.towerType);
 				Controller.getInstance().increaseMoneyByAmount(this.sellValue); // 增加金錢數值
         	}
         });
     }
-	public String getName() {
+	public String getName(String imagePath) {
 		switch (imagePath) {
 			case "resouce\\monkey.png":
 				return "Monkey";
@@ -252,7 +246,7 @@ public class tower {
         double deltaX = targetX - x;
         double deltaY = targetY - y;
         double angle = Math.toDegrees(Math.atan2(deltaY, deltaX)) + 90;
-		if (imagePath.equals("resouce\\battleship.png")) {
+		if (towerType.equals("Battleship")) {
 			Platform.runLater(() -> towerImageView.setRotate(angle + 90));
 		} 
 		else Platform.runLater(() -> towerImageView.setRotate(angle));

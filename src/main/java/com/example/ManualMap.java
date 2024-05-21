@@ -63,8 +63,8 @@ public class ManualMap {
     
 
     // 检查某个位置是否可以放置物品
-    public boolean isPositionPlaceable(String imagePath,int x, int y) {
-        if (imagePath.equals("resouce\\battleship.png")) {
+    public boolean isPositionPlaceable(String towerType,int x, int y) {
+        if (towerType.equals("Battleship")) {
             return grid[y][x] == 2;
         }
         return grid[y][x] == 1; // 注意，这里 x 表示列，y 表示行

@@ -1,18 +1,9 @@
 package com.example;
 
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,7 +17,22 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Controller {
 
@@ -41,6 +47,8 @@ public class Controller {
     private StackPane currentlyFollowing;
     private AnimationTimer timer;
 
+    @FXML
+    private Button start;
     @FXML
     private Button monkey;
     @FXML
@@ -99,12 +107,14 @@ public class Controller {
     @FXML
     private void initialize() {
         // 初始化顯示猴子價格的按鈕
-        
 
         // 鼠標移動事件，用於移動所有動態創建的ImageView
         root.setOnMouseMoved(this::handleMouseMoved);
         // 處理鼠標點擊事件
         root.setOnMouseClicked(this::handleMouseClicked);
+
+        //start
+        start.setOnAction(event -> bloonStart());
 
         // 為每個按鈕設置事件處理程序
         monkey.setOnAction(event -> handleButtonClick("resouce\\monkey.png", 50, 50));
@@ -129,6 +139,56 @@ public class Controller {
         // 啟動計時器
         startTimer();
     }
+    
+    
+    //bloon start
+    private int total;
+    private List<String> types = new ArrayList<>();
+    private List<Integer> amounts = new ArrayList<>();
+    private int currentIndex = 0;
+    bloon bloons= new bloon();
+    private void bloonStart(){
+        //bloons.Bloon_Generate(root);
+        Scanner scanner;
+        try {
+            scanner = new Scanner(new File("resouce//stage1.txt"));
+            total = scanner.nextInt();
+            while (scanner.hasNext()) {
+                String type = scanner.next();
+                int amount = scanner.nextInt();
+                types.add(type);
+                amounts.add(amount);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        int delays = 6000/total;
+        if (!types.isEmpty() && !amounts.isEmpty()) {
+            playNextAnimation(root, delays);
+        }
+    }
+
+    private void playNextAnimation(AnchorPane root, int delay) {
+        if (currentIndex < types.size()) {
+            String type = types.get(currentIndex);
+            int amount = amounts.get(currentIndex);
+
+            Timeline timeline = new Timeline(new KeyFrame(Duration.millis(delay), event -> {
+                bloons.showBloon(root, type);
+            }));
+            timeline.setCycleCount(amount);
+
+            timeline.setOnFinished(event -> {
+                currentIndex++;
+                playNextAnimation(root, delay); // 递归调用，播放下一个动画
+            });
+
+            timeline.play();
+        }
+    }
+
+
+
     private void updateHealthLabel() {
         healthLabel.setText(String.valueOf(health));
     }
@@ -195,7 +255,7 @@ public class Controller {
 
     private void rotateAllMonkeysTowardsTarget() {
         for (tower t : towers) {
-            if (!t.imagePath.equals("resouce\\snag.png") && !t.imagePath.equals("resouce\\bananatree.png")) {
+            if (!t.towerType.equals("Snag") && !t.towerType.equals("Banana Tree")) {
             t.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
             }
         }
@@ -263,7 +323,7 @@ public class Controller {
             double y = monkey.getLayoutY();
             newTower.placeTower(root, x, y);
             currentlyFollowing = newTower.getTowerPane();
-            showMonkeyCost(newTower.getName(), newTower.costValue);
+            showMonkeyCost(newTower.towerType, newTower.costValue);
             System.out.println("Click on button, loading image: " + imagePath);
         } else {
             System.out.println("Not enough money to place this tower.");
@@ -276,7 +336,7 @@ public class Controller {
             Platform.runLater(() -> {
                 currentlyFollowing.setLayoutX(event.getX() -newTower.rangeRadius/2);
                 currentlyFollowing.setLayoutY(event.getY() -newTower.rangeRadius/2);
-                if(manualMap.isPositionPlaceable(newTower.imagePath,(int)event.getX(), (int) event.getY()))
+                if(manualMap.isPositionPlaceable(newTower.towerType,(int)event.getX(), (int) event.getY()))
                     newTower.switchToImage2();
                 else
                     newTower.switchToImage3();
@@ -298,7 +358,7 @@ public class Controller {
         }
         if (currentlyFollowing != null) { // 检测鼠标左键
             System.out.println("click");
-            if(manualMap.isPositionPlaceable(newTower.imagePath,(int)event.getX(), (int) event.getY()))
+            if(manualMap.isPositionPlaceable(newTower.towerType,(int)event.getX(), (int) event.getY()))
             {
                 
                 currentlyFollowing.getChildren().removeAll(newTower.getTowerImageRange());

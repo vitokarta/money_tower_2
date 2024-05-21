@@ -192,6 +192,7 @@
                   </ImageView>
                </graphic>
             </Button>
+            <Button fx:id="start" layoutX="825.0" layoutY="576.0" mnemonicParsing="false" text="Button" />
       </children>
     </AnchorPane>
   </children>
