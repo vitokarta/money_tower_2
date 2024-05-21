@@ -44,12 +44,12 @@
   <children>
     <AnchorPane fx:id="root" maxHeight="-1.0" maxWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-            <ImageView fitHeight="600.0" fitWidth="205.0" layoutX="523.0" layoutY="-3.0" pickOnBounds="true" AnchorPane.bottomAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ImageView fitHeight="600.0" fitWidth="205.0" layoutX="847.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                <image>
                   <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/sidebar.jpg" />
                </image>
             </ImageView>
-            <ImageView fitHeight="643.0" fitWidth="879.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="6.327050781250023" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ImageView fitHeight="600.0" fitWidth="885.0" layoutX="-6.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-6.0" AnchorPane.topAnchor="0.0">
                <image>
                   <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/file_Object%20Removal.jpg" />
                </image>
@@ -85,8 +85,8 @@
                   <Font name="Arial Black" size="20.0" />
                </font>
             </Label>
-            <Button fx:id="start" layoutX="878.0" layoutY="569.0" mnemonicParsing="false" text="Button" />
-            <Button fx:id="bananatree" layoutX="965.0" layoutY="425.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0" style="-fx-background-color: #eac3a3; -fx-background-radius: 10px;">
+            <Button fx:id="start" layoutX="820.0" layoutY="575.0" mnemonicParsing="false" style="-fx-background-color: #eac3a3;" text="Button" />
+            <Button fx:id="bananatree" layoutX="963.0" layoutY="425.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0" style="-fx-background-color: #eac3a3;">
                <graphic>
                   <ImageView fitHeight="50.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -95,7 +95,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="supermonkey" layoutX="965.0" layoutY="355.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0" style="-fx-background-color: #eac3a3; -fx-background-radius: 10px;">
+            <Button fx:id="supermonkey" layoutX="965.0" layoutY="355.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0" style="-fx-background-color: #eac3a3;">
                <graphic>
                   <ImageView fitHeight="44.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -122,7 +122,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="battleship" layoutX="879.0" layoutY="425.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0" style="-fx-background-color: #eac3a3; -fx-background-radius: 10px;">
+            <Button fx:id="battleship" layoutX="879.0" layoutY="425.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0" style="-fx-background-color: #eac3a3;">
                <graphic>
                   <ImageView fitHeight="50.0" fitWidth="49.0" pickOnBounds="true" preserveRatio="true">
                      <image>
