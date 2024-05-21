@@ -79,7 +79,7 @@ public class Controller {
     private AnchorPane root;
 
     private int health = 500; // 血條初始值
-    private int money = 30000; // 金錢初始值
+    private int money = 1000; // 金錢初始值
     private int round = 1; // 回合初始值
     private int cost = 0;
     private final int totalRounds = 40; // 總回合數
@@ -98,27 +98,24 @@ public class Controller {
     }
     @FXML
     private void initialize() {
-        // 初始化顯示猴子價格的按鈕
-        
-
         // 鼠標移動事件，用於移動所有動態創建的ImageView
         root.setOnMouseMoved(this::handleMouseMoved);
         // 處理鼠標點擊事件
         root.setOnMouseClicked(this::handleMouseClicked);
 
         // 為每個按鈕設置事件處理程序
-        monkey.setOnAction(event -> handleButtonClick("resouce\\monkey.png", 50, 50));
-        snag.setOnAction(event -> handleButtonClick("resouce\\snag.png", 50, 50));
-        bananatree.setOnAction(event -> handleButtonClick("resouce\\bananatree.png", 60, 60));
-        battleship.setOnAction(event -> handleButtonClick("resouce\\battleship.png", 60, 60));
-        cannon.setOnAction(event -> handleButtonClick("resouce\\cannon.png", 50, 50));
-        boomerange.setOnAction(event -> handleButtonClick("resouce\\boomerange.png", 50, 50));
-        icemonkey.setOnAction(event -> handleButtonClick("resouce\\icemonkey.png", 60, 60));
-        ninjamonkey.setOnAction(event -> handleButtonClick("resouce\\ninjamonkey.png", 60, 60)); // 特殊尺寸
-        painter.setOnAction(event -> handleButtonClick("resouce\\painter.png", 60, 60));
-        sniper.setOnAction(event -> handleButtonClick("resouce\\sniper.png", 60, 80)); // 特殊尺寸
-        wizmonkey.setOnAction(event -> handleButtonClick("resouce\\wizmonkey.png", 50, 50));
-        supermonkey.setOnAction(event -> handleButtonClick("resouce\\supermonkey.png", 50, 50));
+        monkey.setOnAction(event -> handleButtonClick("resouce\\monkey.png", 50, 50, monkey));
+        snag.setOnAction(event -> handleButtonClick("resouce\\snag.png", 50, 50, snag));
+        bananatree.setOnAction(event -> handleButtonClick("resouce\\bananatree.png", 60, 60, bananatree));
+        battleship.setOnAction(event -> handleButtonClick("resouce\\battleship.png", 60, 60, battleship));
+        cannon.setOnAction(event -> handleButtonClick("resouce\\cannon.png", 50, 50, cannon));
+        boomerange.setOnAction(event -> handleButtonClick("resouce\\boomerange.png", 50, 50, boomerange));
+        icemonkey.setOnAction(event -> handleButtonClick("resouce\\icemonkey.png", 60, 60, icemonkey));
+        ninjamonkey.setOnAction(event -> handleButtonClick("resouce\\ninjamonkey.png", 60, 60, ninjamonkey)); // 特殊尺寸
+        painter.setOnAction(event -> handleButtonClick("resouce\\painter.png", 60, 60, painter));
+        sniper.setOnAction(event -> handleButtonClick("resouce\\sniper.png", 60, 80, sniper)); // 特殊尺寸
+        wizmonkey.setOnAction(event -> handleButtonClick("resouce\\wizmonkey.png", 50, 50, wizmonkey));
+        supermonkey.setOnAction(event -> handleButtonClick("resouce\\supermonkey.png", 50, 50, supermonkey));
 
         // 初始化血條和目標物
         updateHealthLabel();
@@ -135,6 +132,7 @@ public class Controller {
 
     private void updateMoneyLabel() {
         moneyLabel.setText("$" + money);
+        updateAllButtonOverlays();
     }
 
     private void updateRoundLabel() {
@@ -210,7 +208,7 @@ public class Controller {
     }
 
     private void increaseMoney() {
-        money++; // 金錢增加1aa
+        money += 500; // 金錢增加1aa
         updateMoneyLabel(); // 更新顯示的金錢數值
     }
     public void increaseMoneyByAmount(int amount) {
@@ -251,13 +249,26 @@ public class Controller {
         }
     }
 
-    
+    private void updateAllButtonOverlays() {
+        updateButtonOverlay(monkey, money < 150);
+        updateButtonOverlay(snag, money < 250);
+        updateButtonOverlay(bananatree, money < 750);
+        updateButtonOverlay(battleship, money < 400);
+        updateButtonOverlay(cannon, money < 650);
+        updateButtonOverlay(boomerange, money < 350);
+        updateButtonOverlay(icemonkey, money < 300);
+        updateButtonOverlay(ninjamonkey, money < 300);
+        updateButtonOverlay(painter, money < 250);
+        updateButtonOverlay(sniper, money < 350);
+        updateButtonOverlay(wizmonkey, money < 750);
+        updateButtonOverlay(supermonkey, money < 3000);
+    }
+
     tower newTower;
-    private void handleButtonClick(String imagePath, double imageWidth, double imageHeight) {
+    private void handleButtonClick(String imagePath, double imageWidth, double imageHeight,Button button) {
         tower tempTower = new tower(root, imagePath, imageWidth, imageHeight);
         if (money >= tempTower.costValue) {
             newTower = tempTower;
-            //showMonkeyCost();
             towers.add(newTower);
             double x = monkey.getLayoutX() - 100000;
             double y = monkey.getLayoutY();
@@ -265,8 +276,10 @@ public class Controller {
             currentlyFollowing = newTower.getTowerPane();
             showMonkeyCost(newTower.getName(), newTower.costValue);
             System.out.println("Click on button, loading image: " + imagePath);
+            updateButtonOverlay(button, false);
         } else {
             System.out.println("Not enough money to place this tower.");
+            updateButtonOverlay(button, true);
         }
     }
 
@@ -288,6 +301,7 @@ public class Controller {
                     //currentlyFollowing.setVisible(false);
                     currentlyFollowing = null; // 停止跟隨
                 }
+                updateMoneyLabel();
             });
         }
     }
