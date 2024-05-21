@@ -192,7 +192,4 @@
                   </ImageView>
                </graphic>
             </Button>
-      </children>
-    </AnchorPane>
-  </children>
-</VBox>
+.0" mnemonicParsing="false" text="Button" />
