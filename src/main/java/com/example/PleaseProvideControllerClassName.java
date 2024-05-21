@@ -100,13 +100,13 @@ public class PleaseProvideControllerClassName {
         wizmonkey.setOnAction(event -> handleButtonClick("resouce\\wizmonkey.png", 50, 50));
         supermonkey.setOnAction(event -> handleButtonClick("resouce\\supermonkey.png", 50, 50));
     }
+
     private int total;
     private List<String> types = new ArrayList<>();
     private List<Integer> amounts = new ArrayList<>();
     private int currentIndex = 0;
     bloon bloons= new bloon();
     private void bloonStart(){
-        //bloons.Bloon_Generate(root);
         Scanner scanner;
         try {
             scanner = new Scanner(new File("resouce//stage1.txt"));
@@ -120,7 +120,7 @@ public class PleaseProvideControllerClassName {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        int delays = 6000/total;
+        int delays = 8000/total;
         if (!types.isEmpty() && !amounts.isEmpty()) {
             playNextAnimation(root, delays);
         }
