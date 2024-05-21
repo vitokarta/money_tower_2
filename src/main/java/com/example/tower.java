@@ -250,7 +250,6 @@ public class tower {
 			Platform.runLater(() -> towerImageView.setRotate(angle + 90));
 		} 
 		else Platform.runLater(() -> towerImageView.setRotate(angle));
-		System.out.println(angle);
         
     }
 }
