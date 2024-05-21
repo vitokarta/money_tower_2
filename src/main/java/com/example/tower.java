@@ -165,8 +165,8 @@ public class tower {
         towerPane.getChildren().addAll(towerImageRange, towerImageView); // Add both images to the StackPane
 
         button = new Button("sell");
-        button.setLayoutX(0);
-        button.setLayoutY(0);
+        button.setLayoutX(890);
+        button.setLayoutY(570);
 		button.setUserData(this);
 		root.getChildren().add(button);
 		
@@ -175,14 +175,44 @@ public class tower {
             if (parent != null) {
 				parent.getChildren().remove(towerPane);
 				button.setVisible(false);
-				PleaseProvideControllerClassName.removeTower(this); // 移除 tower 实例
+				Controller.removeTower(this); // 移除 tower 实例
 				ManualMap.restoreMap(this);
 				System.out.println(this.imagePath);
-				PleaseProvideControllerClassName.getInstance().increaseMoneyByAmount(this.sellValue); // 增加金錢數值
+				Controller.getInstance().increaseMoneyByAmount(this.sellValue); // 增加金錢數值
         	}
         });
     }
-
+	public String getName() {
+		switch (imagePath) {
+			case "resouce\\monkey.png":
+				return "Monkey";
+			case "resouce\\snag.png":
+				return "Snag";
+			case "resouce\\bananatree.png":
+				return "Banana Tree";
+			case "resouce\\battleship.png":
+				return "Battleship";
+			case "resouce\\cannon.png":
+				return "Cannon";
+			case "resouce\\boomerange.png":
+				return "Boomerange";
+			case "resouce\\icemonkey.png":
+				return "IceMonkey";
+			case "resouce\\ninjamonkey.png":
+				return "NinjaMonkey";
+			case "resouce\\painter.png":
+				return "Painter";
+			case "resouce\\sniper.png":
+				return "Sniper";
+			case "resouce\\wizmonkey.png":
+				return "Wizard";
+			case "resouce\\supermonkey.png":
+				return "SuperMonkey";
+			default:
+				return "Unknown";
+		}
+	}
+	
     public ImageView getTowerImageView() {
         return towerImageView;
     }
@@ -204,7 +234,7 @@ public class tower {
         towerPane.setLayoutX(x);  // Center the pane (assuming width and height are 100)
         towerPane.setLayoutY(y);
         root.getChildren().add(towerPane);
-		PleaseProvideControllerClassName.getInstance().decreaseMoneyByAmount(this.costValue); // 花錢買猴
+		Controller.getInstance().decreaseMoneyByAmount(this.costValue); // 花錢買猴
     }
 	public void rotateTowards(double targetX, double targetY) {
 		double x;
@@ -222,7 +252,11 @@ public class tower {
         double deltaX = targetX - x;
         double deltaY = targetY - y;
         double angle = Math.toDegrees(Math.atan2(deltaY, deltaX)) + 90;
+		if (imagePath.equals("resouce\\battleship.png")) {
+			Platform.runLater(() -> towerImageView.setRotate(angle + 90));
+		} 
+		else Platform.runLater(() -> towerImageView.setRotate(angle));
 		System.out.println(angle);
-        Platform.runLater(() -> towerImageView.setRotate(angle));
+        
     }
 }

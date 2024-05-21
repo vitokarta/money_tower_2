@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.animation.AnimationTimer;
@@ -16,6 +18,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -40,27 +44,27 @@ public class Controller {
     @FXML
     private Button monkey;
     @FXML
-    private Button snag;
+    private Button snag; 
     @FXML
-    private Button bananatree;
+    private Button bananatree; 
     @FXML
-    private Button battleship;
+    private Button battleship; 
     @FXML
-    private Button cannon;
+    private Button cannon; 
     @FXML
-    private Button boomerange;
+    private Button boomerange; 
     @FXML
-    private Button icemonkey;
+    private Button icemonkey; 
     @FXML
-    private Button ninjamonkey;
+    private Button ninjamonkey; 
     @FXML
-    private Button painter;
+    private Button painter; 
     @FXML
-    private Button sniper;
+    private Button sniper; 
     @FXML
-    private Button wizmonkey;
+    private Button wizmonkey; 
     @FXML
-    private Button supermonkey;
+    private Button supermonkey; 
 
     @FXML
     private Label healthLabel;
@@ -68,19 +72,35 @@ public class Controller {
     private Label moneyLabel;
     @FXML
     private Label roundLabel;
+    @FXML
+    private Label costLabel; // 新增的顯示猴子價格的按鈕
 
     @FXML
     private AnchorPane root;
 
     private int health = 500; // 血條初始值
-    private int money = 0; // 金錢初始值
+    private int money = 30000; // 金錢初始值
     private int round = 1; // 回合初始值
+    private int cost = 0;
     private final int totalRounds = 40; // 總回合數
     private ImageView target; // 目標物
-    private ImageView placedMonkey; // 被放置的猴子
 
+    private static List<tower> towers = new ArrayList<>();
+    private ManualMap manualMap = new ManualMap("resouce\\map1.jpg");
+    private static Controller instance;
+
+    public Controller() {
+        instance = this;
+    }
+
+    public static Controller getInstance() {
+        return instance;
+    }
     @FXML
     private void initialize() {
+        // 初始化顯示猴子價格的按鈕
+        
+
         // 鼠標移動事件，用於移動所有動態創建的ImageView
         root.setOnMouseMoved(this::handleMouseMoved);
         // 處理鼠標點擊事件
@@ -104,11 +124,11 @@ public class Controller {
         updateHealthLabel();
         updateMoneyLabel();
         updateRoundLabel();
+        updateCostLabel();
         initializeTarget();
         // 啟動計時器
         startTimer();
     }
-
     private void updateHealthLabel() {
         healthLabel.setText(String.valueOf(health));
     }
@@ -120,7 +140,9 @@ public class Controller {
     private void updateRoundLabel() {
         roundLabel.setText("Round:\n" + round + "/" + totalRounds);
     }
-
+    private void updateCostLabel() {
+        costLabel.setText("Cost:" + cost);
+    }
     private void initializeTarget() {
         // 初始化目標物(之後要考慮多顆氣球，或是那個點有氣球經過再做氣球類別判斷來扣血)
         target = new ImageView("file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/bloon.png");
@@ -136,7 +158,7 @@ public class Controller {
             @Override
             public void handle(long now) {
                 checkTargetPosition();
-                rotatePlacedMonkeyTowardsTarget();
+                rotateAllMonkeysTowardsTarget();
             }
         };
         timer.start();
@@ -145,32 +167,40 @@ public class Controller {
     private void checkTargetPosition() {
         double x = target.getLayoutX();
         double y = target.getLayoutY();
-
-        // 假設特定座標為(500, 300)
-        if (x > 500 && y > 300) {
-            reduceHealth();
-            // 停止定時器以防止多次減少
-            timer.stop();
-        }
-
-        // 更新目標物的位置（待更新）
+        double speed = 1.0; // 目标物移动的速度
+    
+        // 更新目标物的位置
         Platform.runLater(() -> {
-            target.setLayoutX(x + 1);
-            target.setLayoutY(y + 1);
+            // Z字形路径
+            if (x < 200 && y == 0) {  // 向右移动
+                target.setLayoutX(x + speed);
+            } else if (x >= 200 && y < 150) {  // 向下移动
+                target.setLayoutY(y + speed);
+            } else if (x > 0 && y >= 150 && y < 300) {  // 向左移动
+                target.setLayoutX(x - speed);
+            } else if (x == 0 && y >= 150 && y < 300) {  // 向下移动
+                target.setLayoutY(y + speed);
+            } else if (x < 300 && y == 300) {  // 向右移动
+                target.setLayoutX(x + speed);
+            } else if (x >= 300 && y < 450) {  // 向下移动
+                target.setLayoutY(y + speed);
+            } else if (x > 100 && y >= 450) {  // 向左移动
+                target.setLayoutX(x - speed);
+            } else if (x <= 100 && y >= 450 && y < 600) {  // 向下移动
+                target.setLayoutY(y + speed);
+            }
         });
     }
+    
 
-    private void rotatePlacedMonkeyTowardsTarget() {
-        if (placedMonkey != null) {
-            double deltaX = target.getLayoutX() - placedMonkey.getLayoutX();
-            double deltaY = target.getLayoutY() - placedMonkey.getLayoutY();
-            double angle = Math.toDegrees(Math.atan2(deltaY, deltaX));
-
-            Platform.runLater(() -> {
-                placedMonkey.setRotate(angle);
-            });
+    private void rotateAllMonkeysTowardsTarget() {
+        for (tower t : towers) {
+            if (!t.imagePath.equals("resouce\\snag.png") && !t.imagePath.equals("resouce\\bananatree.png")) {
+            t.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
+            }
         }
     }
+    
 
     private void reduceHealth() {
         if (health > 0) {
@@ -180,8 +210,20 @@ public class Controller {
     }
 
     private void increaseMoney() {
-        money++; // 金錢增加1
+        money++; // 金錢增加1aa
         updateMoneyLabel(); // 更新顯示的金錢數值
+    }
+    public void increaseMoneyByAmount(int amount) {
+        money += amount;
+        updateMoneyLabel();
+    }
+    public void decreaseMoneyByAmount(int amount) {
+        money -= amount;
+        updateMoneyLabel();
+    }
+    public void showMonkeyCost(String monkeyName, int cost) {
+        String message = String.format("%s\nCost: %d", monkeyName, cost);
+        costLabel.setText(message);
     }
 
     private void advanceRound() {
@@ -201,46 +243,138 @@ public class Controller {
         target.setLayoutY(0);
         // 其他重置邏輯（如更新目標物的圖像等）可以在這裡添加
     }
+    private void updateButtonOverlay(Button button, boolean showOverlay) {
+        if (showOverlay) {
+            button.setStyle("-fx-background-color: rgba(255, 0, 0, 0.5);"); // 50%透明的红色
+        } else {
+            button.setStyle(""); // 恢复原始样式
+        }
+    }
 
+    
     tower newTower;
     private void handleButtonClick(String imagePath, double imageWidth, double imageHeight) {
-        newTower = new tower(root, imagePath, imageWidth, imageHeight);
-        double x = monkey.getLayoutX() - 1000;
-        double y = monkey.getLayoutY() + 1000;
-        newTower.placeTower(root, x, y);
-        currentlyFollowing = newTower.getTowerPane();
-        placedMonkey = newTower.getTowerImageView(); // 更新 placedMonkey 以旋轉正確的圖像
-        System.out.println("Click on button, loading image: " + imagePath);
+        tower tempTower = new tower(root, imagePath, imageWidth, imageHeight);
+        if (money >= tempTower.costValue) {
+            newTower = tempTower;
+            //showMonkeyCost();
+            towers.add(newTower);
+            double x = monkey.getLayoutX() - 100000;
+            double y = monkey.getLayoutY();
+            newTower.placeTower(root, x, y);
+            currentlyFollowing = newTower.getTowerPane();
+            showMonkeyCost(newTower.getName(), newTower.costValue);
+            System.out.println("Click on button, loading image: " + imagePath);
+        } else {
+            System.out.println("Not enough money to place this tower.");
+        }
     }
 
     private void handleMouseMoved(MouseEvent event) {
-        if (currentlyFollowing != null) {
+        // 確保在UI線程上執行
+        if (currentlyFollowing != null) { // 僅當存在正在跟隨的ImageView時更新位置
             Platform.runLater(() -> {
-                currentlyFollowing.setLayoutX(event.getX() - newTower.rangeRadius / 2);
-                currentlyFollowing.setLayoutY(event.getY() - newTower.rangeRadius / 2);
+                currentlyFollowing.setLayoutX(event.getX() -newTower.rangeRadius/2);
+                currentlyFollowing.setLayoutY(event.getY() -newTower.rangeRadius/2);
+                if(manualMap.isPositionPlaceable(newTower.imagePath,(int)event.getX(), (int) event.getY()))
+                    newTower.switchToImage2();
+                else
+                    newTower.switchToImage3();
                 System.out.println(event.getX() + " " + event.getY());
                 if (event.getX() > 950 && event.getY() < 50) {
-                    currentlyFollowing.setVisible(false);
-                    currentlyFollowing = null;
+                    towers.remove(newTower);
+                    newTower.button.setVisible(false);
+                    root.getChildren().remove(newTower.getTowerPane());
+                    //currentlyFollowing.setVisible(false);
+                    currentlyFollowing = null; // 停止跟隨
                 }
             });
         }
     }
 
     private void handleMouseClicked(MouseEvent event) {
-        if (currentlyFollowing != null) {
-            System.out.println("click");
-            newTower.getTowerImageRange().setVisible(false);
-            currentlyFollowing.getChildren().removeAll(newTower.getTowerImageRange());
-            currentlyFollowing = null;
-        }
-
-        if (newTower != null && newTower.button != null) {
-            newTower.button.setVisible(false);
-        }
-
         if (target != null && event.getTarget() == target) {
             increaseMoney(); // 當目標物被點擊時增加金錢
         }
+        if (currentlyFollowing != null) { // 检测鼠标左键
+            System.out.println("click");
+            if(manualMap.isPositionPlaceable(newTower.imagePath,(int)event.getX(), (int) event.getY()))
+            {
+                
+                currentlyFollowing.getChildren().removeAll(newTower.getTowerImageRange());
+                currentlyFollowing.setLayoutX(event.getX() -newTower.imagewidth/2);
+                currentlyFollowing.setLayoutY(event.getY() -newTower.imageheight/2);
+                currentlyFollowing = null; // 停止跟随
+
+                for(int y=0;y<newTower.imageheight;y++)
+                {
+                    for(int x=0;x<newTower.imagewidth;x++)
+                    {
+                        int y1=(int)event.getY()-(int)newTower.imageheight/2+y;
+                        int x1=(int)event.getX()-(int)newTower.imagewidth/2+x;
+                        if(y1>0&&x1>0&&y1<manualMap.grid.length&&x1<manualMap.grid[0].length)
+                            manualMap.grid[y1][x1] =0;
+                    }
+                }
+            }
+            
+        }
+        else
+        {
+            double clickX = event.getX();
+            double clickY = event.getY();
+
+            boolean clickedOnTower = false;
+            for (tower t : towers) {
+                double imageViewX = t.getTowerPane().getLayoutX();
+                double imageViewY = t.getTowerPane().getLayoutY();
+                double imageViewWidth = t.getTowerImageView().getFitWidth();
+                double imageViewHeight = t.getTowerImageView().getFitHeight();
+
+                if(clickX >= imageViewX && clickX <= imageViewX + imageViewWidth &&
+                clickY >= imageViewY && clickY <= imageViewY + imageViewHeight){
+                    for (tower t2 : towers) {
+                        if(t2.getTowerPane().getChildren().contains(t2.getTowerImageRange()))
+                        {
+                            t2.getTowerPane().getChildren().remove(t2.getTowerImageRange());
+                            t2.getTowerPane().setLayoutX(t2.getTowerPane().getLayoutX() + t2.rangeRadius / 2 - t2.imagewidth/2);
+                            t2.getTowerPane().setLayoutY(t2.getTowerPane().getLayoutY() + t2.rangeRadius / 2 - t2.imageheight/2);
+                            t2.button.setVisible(false);
+                        }
+                    }
+                    clickedOnTower = true;
+                    t.button.setVisible(true);
+                    if(!t.getTowerPane().getChildren().contains(t.getTowerImageRange()))
+                    {
+                        t.getTowerPane().getChildren().add(t.getTowerImageRange());
+                        t.getTowerImageRange().toBack();
+                        t.getTowerImageRange().setVisible(true);
+                        t.getTowerPane().setLayoutX(t.getTowerPane().getLayoutX() - t.rangeRadius / 2 + t.imagewidth/2);
+                        t.getTowerPane().setLayoutY(t.getTowerPane().getLayoutY() - t.rangeRadius / 2 + t.imageheight/2);
+                        t.button.toFront();
+                    }
+                    System.out.println("click");
+                    break;
+                }
+                else
+                {
+                    if(t.getTowerPane().getChildren().contains(t.getTowerImageRange()))
+                    {
+                        t.getTowerPane().getChildren().remove(t.getTowerImageRange());
+                        t.getTowerPane().setLayoutX(t.getTowerPane().getLayoutX() + t.rangeRadius / 2 - t.imagewidth/2);
+                        t.getTowerPane().setLayoutY(t.getTowerPane().getLayoutY() + t.rangeRadius / 2 - t.imageheight/2);
+                    }
+                }
+            }
+            if (!clickedOnTower) {
+                for (tower t : towers) {
+                    t.button.setVisible(false);
+                }
+            }
+        }
+
+    }
+    public static void removeTower(tower t) {
+        towers.remove(t);
     }
 }
