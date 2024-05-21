@@ -85,6 +85,7 @@
                   <Font name="Arial Black" size="20.0" />
                </font>
             </Label>
+            <Button fx:id="start" layoutX="878.0" layoutY="569.0" mnemonicParsing="false" text="Button" />
             <Button fx:id="bananatree" layoutX="965.0" layoutY="425.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0" style="-fx-background-color: #eac3a3; -fx-background-radius: 10px;">
                <graphic>
                   <ImageView fitHeight="50.0" fitWidth="46.0" pickOnBounds="true" preserveRatio="true">
@@ -166,7 +167,14 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="ninjamonkey" layoutX="879.0" layoutY="150.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0" style="-fx-background-color: #eac3a3; -fx-background-radius: 10px;" />
+            <Button fx:id="ninjamonkey" layoutX="879.0" layoutY="150.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0" style="-fx-background-color: #eac3a3; -fx-background-radius: 10px;">
+               <graphic>
+                  <ImageView fitHeight="51.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/ninjamonkey.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
             <Button fx:id="snag" contentDisplay="GRAPHIC_ONLY" layoutX="967.0" layoutY="81.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="70.0" style="-fx-background-color: #eac3a3; -fx-background-radius: 10px;" text="Button">
                <graphic>
                   <ImageView fitHeight="44.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
@@ -185,11 +193,6 @@
                   </ImageView>
                </graphic>
             </Button>
-            <ImageView fitHeight="51.0" fitWidth="52.0" layoutX="889.0" layoutY="155.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/ninjamonkey.png" />
-               </image>
-            </ImageView>
       </children>
     </AnchorPane>
   </children>

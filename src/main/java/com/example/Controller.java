@@ -135,6 +135,7 @@ public class Controller {
         updateMoneyLabel();
         updateRoundLabel();
         updateCostLabel();
+        updateAllButtonOverlays();
         initializeTarget();
         // 啟動計時器
         startTimer();
@@ -273,14 +274,17 @@ public class Controller {
     private void increaseMoney() {
         money += 500; // 金錢增加1aa
         updateMoneyLabel(); // 更新顯示的金錢數值
+        updateAllButtonOverlays();
     }
     public void increaseMoneyByAmount(int amount) {
         money += amount;
         updateMoneyLabel();
+        updateAllButtonOverlays();
     }
     public void decreaseMoneyByAmount(int amount) {
         money -= amount;
         updateMoneyLabel();
+        updateAllButtonOverlays();
     }
     public void showMonkeyCost(String monkeyName, int cost) {
         String message = String.format("%s\nCost: %d", monkeyName, cost);
