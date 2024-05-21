@@ -298,6 +298,7 @@ public class Controller {
                     towers.remove(newTower);
                     newTower.button.setVisible(false);
                     root.getChildren().remove(newTower.getTowerPane());
+                    increaseMoneyByAmount(newTower.costValue);
                     //currentlyFollowing.setVisible(false);
                     currentlyFollowing = null; // 停止跟隨
                 }
