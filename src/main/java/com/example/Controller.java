@@ -360,7 +360,7 @@ public class Controller {
             System.out.println("click");
             if(manualMap.isPositionPlaceable(newTower.towerType,(int)event.getX(), (int) event.getY()))
             {
-                
+                newTower.button.setVisible(false);
                 currentlyFollowing.getChildren().removeAll(newTower.getTowerImageRange());
                 currentlyFollowing.setLayoutX(event.getX() -newTower.imagewidth/2);
                 currentlyFollowing.setLayoutY(event.getY() -newTower.imageheight/2);
