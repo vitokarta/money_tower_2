@@ -1,161 +1,164 @@
 package com.example;
 
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Timeline;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
 
 public class bloon {
+    private static int cun=0;
+    private static final Image RED = new Image("file:@..//..//resouce//R.jpg");
+    private static final Image BLUE = new Image("file:@..//..//resouce//B.jpg");
+    private static final Image GREEN = new Image("file:@..//..//resouce//g.jpg");
+    private static final Image YELLOW = new Image("file:@..//..//resouce//y.jpg");
+    private static final Image PINK = new Image("file:@..//..//resouce//p.jpg");
 
-    public int health;
-    public int width;
-    public int height;
-    public int Speed;
+    private String type;
+    private ImageView imageView;
+    private double speed;
+    private SVGPath path;
+    private PathTransition transition;
+    private boolean occurred = false;
+    public bloon(String type, AnchorPane root) {
 
-    
-    /*public void readStage(AnchorPane anchorPane ,String stage_path) throws FileNotFoundException{
-        Scanner scanner = new Scanner(new File(stage_path));
-        int total = scanner.nextInt();
-        System.out.println(total);
-        String type;
-        int amount;
-        //scanner.next();
-        while (scanner.hasNext()) {
-            type = scanner.next();
-            amount = scanner.nextInt();
-            //System.out.println(type + " " + amount);
-            Bloon_Generate(anchorPane, type, amount);
-            while (Bloon_Generate(anchorPane, type, amount) == false) {
-                
-            }
-        }
 
-    }*/
+        this.type = type;
+        this.imageView = new ImageView(getBloonImage(type));
+        this.imageView.toFront();
+        this.imageView.setFitWidth(40);
+        this.imageView.setFitHeight(40);
+        root.getChildren().add(this.imageView);
+        
 
-    public void showBloon(AnchorPane anchorPane, String type){
-        ImageView bloonImageView;
-        Image img;
-        String bloonfile = "resouce//" + type + ".jpg";
         try {
-            img = new Image(new FileInputStream(bloonfile));
-            bloonImageView = new ImageView(img);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return ;
-        }
-        bloonImageView.toFront();
-        bloonImageView.setFitWidth(40);
-        bloonImageView.setFitHeight(40);
-        SVGPath svg = new SVGPath();
-        Path filePath = Paths.get("resouce//svg.txt");
-        String content;
-        try {
-            content = Files.readString(filePath);
-            svg.setContent(content);
+            Path filePath = Paths.get("resouce//svg.txt");
+            String content = Files.readString(filePath);
+            this.path = new SVGPath();
+            this.path.setContent(content);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        anchorPane.getChildren().addAll(bloonImageView);        
-        //到終點消失
-        PathTransition pathTransition = new PathTransition(Duration.millis(5000), svg,bloonImageView);
-        pathTransition.setOnFinished((ActionEvent event) -> {
-            anchorPane.getChildren().remove(bloonImageView); // 从 AnchorPane 中移除 ImageView
-        });
-        pathTransition.setInterpolator(Interpolator.LINEAR);
-        pathTransition.play();
+        this.speed = calculateSpeed(type) * 2;
+        startAnimation(root);
     }
 
-    public void Bloon_Generate(AnchorPane anchorPane, String b_type, int amount){
-        //set image
-        /*ImageView bloonImageView;
-        Image img;
-        String bloonfile = "resouce//" + b_type + ".jpg";
-        int delay = 6000 / amount;
-        try {
-            img = new Image(new FileInputStream(bloonfile));
-            bloonImageView = new ImageView(img);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return ;
-        }
-        bloonImageView.toFront();
-        bloonImageView.setFitWidth(40);
-        bloonImageView.setFitHeight(40);
-        for(int i = 0; i < amount; i++){
-            showBloon(anchorPane, bloonImageView);
-        }
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000), event -> {
-            showBloon(anchorPane, bloonImageView);
-        }));
-        timeline.setCycleCount(3); // Set the number of iterations
-        timeline.play();*/
-
-        //目標圖片測試
-        /*ImageView targetImageView;
-        try {
-            Image target_img = new Image(new FileInputStream("resouce//sidebar.jpg"));
-            targetImageView = new ImageView(target_img);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
-        targetImageView.setFitHeight(200);
-        targetImageView.setFitWidth(200);;
-        targetImageView.setLayoutX(500);// 设置目标图片的X位置
-        targetImageView.setLayoutY(500); // 设置目标图片的Y位置
-        anchorPane.getChildren().addAll(bloonImageView, targetImageView);*/    
-
+    private double newCurrentTime=0;
+    private void startAnimation(AnchorPane root) {
+        this.transition = new PathTransition(Duration.millis(10000 / this.speed), this.path, this.imageView);
+        this.transition.setInterpolator(Interpolator.LINEAR);
         
+        //this.transition.jumpTo(Duration.millis(0));
+        this.transition.setOnFinished((ActionEvent event) -> {
+            root.getChildren().remove(this.imageView);
+        });
+        this.transition.play();
 
-        /*AnimationTimer timer = new AnimationTimer() {  //碰到目標圖片消失
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
             public void handle(long now) {
-                if (checkCollision(bloonImageView, targetImageView, anchorPane)) {
-                    anchorPane.getChildren().remove(bloonImageView); // Remove the ImageView
-                    this.stop(); // Stop the timer
+                if (checkCollision(imageView, Controller.targetImageView,Controller.targetImageView2) && !occurred) {
+                    occurred = true;
+                    System.out.println("Collision Detected!");
+                    System.out.println(cun++);
+                    handleCollision(root,this);
                 }
             }
         };
-        timer.start();*/
+        timer.start();
     }
-    //判斷是否消失
-    /*private boolean checkCollision(ImageView bloonImageView,ImageView targetImageView, AnchorPane anchorPane) {
-        for (javafx.scene.Node node : anchorPane.getChildren()) {
-            if (node instanceof ImageView && node == targetImageView) {
-                if (bloonImageView.getBoundsInParent().intersects(targetImageView.getBoundsInParent())) {
-                    return true;
-                }
-            }
+
+    private boolean checkCollision(ImageView iv1, ImageView iv2,ImageView iv3) {
+        return iv1.getBoundsInParent().intersects(iv2.getBoundsInParent())|| iv1.getBoundsInParent().intersects(iv3.getBoundsInParent());
+    }
+
+    private void handleCollision(AnchorPane root, AnimationTimer timer) {
+        this.type = bloonDestroy(this.type);
+        if (!this.type.equals("0")) {
+            //new bloon(nextType, root); // Create a new Bloon with the next type
+            changeBloon(this.type, root);
         }
-        return false;
-    }*/
+        else{
+            timer.stop(); // 停止定时器
+            root.getChildren().remove(this.imageView);
+        }
+                
+    }
+    private void changeBloon(String newType, AnchorPane root) {
+        Image newImage = getBloonImage(newType);
+        System.out.println(getBloonImage(newType));
+        ImageView newImageView = new ImageView(newImage);
+        newImageView.setFitWidth(40);
+        newImageView.setFitHeight(40);
+        //newImageView.setLayoutX();
+        //newImageView.setLayoutY(0);
+        root.getChildren().add(newImageView);
+        root.getChildren().remove(this.imageView);
+
+        double currentTime = this.transition.getCurrentTime().toMillis();
+        double oldTotalDuration = this.transition.getTotalDuration().toMillis();
+        double progress = currentTime / oldTotalDuration;
+
+        double newBloonSpeed = calculateSpeed(newType) * 2;
+        double newTotalDuration = 10000 / newBloonSpeed;
+        this.newCurrentTime = newTotalDuration * progress;
+
+        PathTransition newTransition = new PathTransition(Duration.millis(newTotalDuration), this.path, newImageView);
+        newTransition.setInterpolator(Interpolator.LINEAR);
+        newTransition.setOnFinished(event -> root.getChildren().remove(newImageView));
+        newTransition.jumpTo(Duration.millis(newCurrentTime+200)); // 设置正确的跳转时间
+        newTransition.play();
+
+        this.transition.stop();
+        this.transition = newTransition;
+        this.imageView = newImageView;
+        occurred = false;
+        
+        //startAnimation(root); // Call startAnimation again to reset the AnimationTimer
+    }
+
+    private double calculateSpeed(String type) {
+        switch (type) {
+            case "R": return 1;
+            case "B": return 1.4;
+            case "G": return 1.8;
+            case "Y": return 3.2;
+            case "P": return 3.5;
+            default: return 1;
+        }
+    }
+
+    private Image getBloonImage(String type) {
+        switch (type) {
+            case "R": return RED;
+            case "B": return BLUE;
+            case "G": return GREEN;
+            case "Y": return YELLOW;
+            case "P": return PINK;
+            default: return null;
+        }
+    }
+
+    private String bloonDestroy(String type) {
+        switch (type) {
+            case "R": return "0";
+            case "B": return "R";
+            case "G": return "B";
+            case "Y": return "G";
+            case "P": return "Y";
+            default: return "0";
+        }
+    }
 }

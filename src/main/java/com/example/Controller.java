@@ -97,6 +97,8 @@ public class Controller {
     private ManualMap manualMap = new ManualMap("resouce\\map1.jpg");
     private static Controller instance;
 
+    //private bloon bloons;
+
     public Controller() {
         instance = this;
     }
@@ -104,9 +106,32 @@ public class Controller {
     public static Controller getInstance() {
         return instance;
     }
+
+    static public ImageView targetImageView;
+    static public ImageView targetImageView2;
     @FXML
     private void initialize() {
         // 初始化顯示猴子價格的按鈕
+        //bloons= new bloon(root);
+        try {
+            Image target_img = new Image(new FileInputStream("resouce//bloon.png"));
+            targetImageView = new ImageView(target_img);
+            targetImageView2 = new ImageView(target_img);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+        targetImageView.setFitHeight(70);
+        targetImageView.setFitWidth(70);
+        targetImageView.setLayoutX(550); // 设置目标图片的X位置
+        targetImageView.setLayoutY(550); // 设置目标图片的Y位置
+        targetImageView.setOpacity(0.5);
+        targetImageView2.setFitHeight(70);
+        targetImageView2.setFitWidth(70);
+        targetImageView2.setLayoutX(350); // 设置目标图片的X位置
+        targetImageView2.setLayoutY(350);
+        root.getChildren().add(targetImageView);
+        root.getChildren().add(targetImageView2);
 
         // 鼠標移動事件，用於移動所有動態創建的ImageView
         root.setOnMouseMoved(this::handleMouseMoved);
@@ -166,7 +191,7 @@ public class Controller {
     private List<String> types = new ArrayList<>();
     private List<Integer> amounts = new ArrayList<>();
     private int currentIndex = 0;
-    bloon bloons= new bloon();
+    
     private void bloonStart(){
         //bloons.Bloon_Generate(root);
         Scanner scanner;
@@ -194,7 +219,9 @@ public class Controller {
             int amount = amounts.get(currentIndex);
 
             Timeline timeline = new Timeline(new KeyFrame(Duration.millis(delay), event -> {
-                bloons.showBloon(root, type);
+                //System.out.println("Playing animation: " + type);
+                //bloons.showBloon(root, type);
+                new bloon(type, root);
             }));
             timeline.setCycleCount(amount);
 
