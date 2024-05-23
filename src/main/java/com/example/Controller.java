@@ -93,11 +93,10 @@ public class Controller {
     private final int totalRounds = 40; // 總回合數
     private ImageView target; // 目標物
 
-    private static List<tower> towers = new ArrayList<>();
+    public static List<tower> towers = new ArrayList<>();
+    public static List<bloon> bloons = new ArrayList<>();
     private ManualMap manualMap = new ManualMap("resouce\\map1.jpg");
     private static Controller instance;
-
-    //private bloon bloons;
 
     public Controller() {
         instance = this;
@@ -141,19 +140,7 @@ public class Controller {
         //start
         start.setOnAction(event -> bloonStart());
 
-        // 為每個按鈕設置事件處理程序
-        /*monkey.setOnAction(event -> handleButtonClick("resouce\\monkey.png", 50, 50, monkey));
-        snag.setOnAction(event -> handleButtonClick("resouce\\snag.png", 50, 50, snag));
-        bananatree.setOnAction(event -> handleButtonClick("resouce\\bananatree.png", 60, 60, bananatree));
-        battleship.setOnAction(event -> handleButtonClick("resouce\\battleship.png", 60, 60, battleship));
-        cannon.setOnAction(event -> handleButtonClick("resouce\\cannon.png", 50, 50, cannon));
-        boomerange.setOnAction(event -> handleButtonClick("resouce\\boomerange.png", 50, 50, boomerange));
-        icemonkey.setOnAction(event -> handleButtonClick("resouce\\icemonkey.png", 60, 60, icemonkey));
-        ninjamonkey.setOnAction(event -> handleButtonClick("resouce\\ninjamonkey.png", 60, 60, ninjamonkey)); // 特殊尺寸
-        painter.setOnAction(event -> handleButtonClick("resouce\\painter.png", 60, 60, painter));
-        sniper.setOnAction(event -> handleButtonClick("resouce\\sniper.png", 60, 80, sniper)); // 特殊尺寸
-        wizmonkey.setOnAction(event -> handleButtonClick("resouce\\wizmonkey.png", 50, 50, wizmonkey));
-        supermonkey.setOnAction(event -> handleButtonClick("resouce\\supermonkey.png", 50, 50, supermonkey));*/
+
         setButtonHandlers(monkey, "resouce\\monkey.png", 50, 50, 150);
         setButtonHandlers(snag, "resouce\\snag.png", 50, 50, 250);
         setButtonHandlers(bananatree, "resouce\\bananatree.png", 60, 60, 750);
@@ -166,9 +153,6 @@ public class Controller {
         setButtonHandlers(sniper, "resouce\\sniper.png", 60, 80, 350); // 特殊尺寸
         setButtonHandlers(wizmonkey, "resouce\\wizmonkey.png", 50, 50, 750);
         setButtonHandlers(supermonkey, "resouce\\supermonkey.png", 50, 50, 3000);
-
-        //monkey.setOnMousePressed(event -> handleButtonPress(monkey));
-       // monkey.setOnMouseReleased(event -> handleButtonRelease(monkey));
 
         // 初始化血條和目標物
         updateHealthLabel();
@@ -219,9 +203,7 @@ public class Controller {
             int amount = amounts.get(currentIndex);
 
             Timeline timeline = new Timeline(new KeyFrame(Duration.millis(delay), event -> {
-                //System.out.println("Playing animation: " + type);
-                //bloons.showBloon(root, type);
-                new bloon(type, root);
+                bloons.add(new bloon(type, root,0));
             }));
             timeline.setCycleCount(amount);
 
@@ -508,5 +490,8 @@ public class Controller {
     }
     public static void removeTower(tower t) {
         towers.remove(t);
+    }
+    public static void removeBloon(bloon b) {
+        bloons.remove(b);
     }
 }
