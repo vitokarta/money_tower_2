@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -34,6 +35,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
+import javafx.scene.shape.Circle;
 public class Controller {
 
     @FXML
@@ -94,6 +98,7 @@ public class Controller {
     private ImageView target; // 目標物
 
     private static List<tower> towers = new ArrayList<>();
+    public static List<Projectile> projectiles = new ArrayList<>();
     private ManualMap manualMap = new ManualMap("resouce\\map1.jpg");
     private static Controller instance;
 
@@ -240,11 +245,58 @@ public class Controller {
             public void handle(long now) {
                 checkTargetPosition();
                 rotateAllMonkeysTowardsTarget();
+                updateAllProjectiles();
+                rotateAllProjectilesTowardsTarget();
+                //checkAndShootBullets();
             }
         };
         timer.start();
     }
+    private void updateAllProjectiles() {
+        double targetX = target.getLayoutX();
+        double targetY = target.getLayoutY();
+        
+        updateProjectile(root, targetX+target.getFitWidth()/2, targetY +target.getFitHeight()/2);
+        
+    }
+    public void updateProjectile(AnchorPane root, double targetX, double targetY) {
+        Iterator<Projectile> iterator = projectiles.iterator();
+        while (iterator.hasNext()) {
+			//System.out.println("123");
+            Projectile projectile = iterator.next();
+            projectile.move();
+            if (projectile.isRemoved()) {
+                root.getChildren().remove(projectile.getProjectileImageView());
+                iterator.remove();
+            }
+        }
+        for(tower t : towers){
+            t.attackDelayCounter++;
+            if (t.isTargetInRange(targetX, targetY)) {
+                t.shoot(root, targetX, targetY);
+            }
+        }
+        /* */
+    }
 
+
+    
+
+    /*private void checkAndShootBullets() {
+
+        for (tower t : towers) {
+            double towerCenterX = t.getTowerPane().getLayoutX() + t.getTowerImageView().getFitWidth() / 2;
+            double towerCenterY = t.getTowerPane().getLayoutY() + t.getTowerImageView().getFitHeight() / 2;
+            double targetCenterX = target.getLayoutX() + target.getFitWidth() / 2;
+            double targetCenterY = target.getLayoutY() + target.getFitHeight() / 2;
+
+            double distance = Math.sqrt(Math.pow(targetCenterX - towerCenterX, 2) + Math.pow(targetCenterY - towerCenterY, 2));
+            
+            if (distance <= t.rangeRadius) {
+                t.shootBullet(targetCenterX, targetCenterY, root);
+            }
+        }
+    }*/
     private void checkTargetPosition() {
         double x = target.getLayoutX();
         double y = target.getLayoutY();
@@ -282,6 +334,11 @@ public class Controller {
         }
     }
     
+    private void rotateAllProjectilesTowardsTarget() {
+        for (Projectile p : projectiles) {
+            p.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
+        }
+    }
 
     private void reduceHealth() {
         if (health > 0) {
@@ -409,6 +466,7 @@ public class Controller {
                 currentlyFollowing.getChildren().removeAll(newTower.getTowerImageRange());
                 currentlyFollowing.setLayoutX(event.getX() -newTower.imagewidth/2);
                 currentlyFollowing.setLayoutY(event.getY() -newTower.imageheight/2);
+                newTower.setPlaced(true);
                 currentlyFollowing = null; // 停止跟随
 
                 for(int y=0;y<newTower.imageheight;y++)
@@ -430,6 +488,7 @@ public class Controller {
             double clickY = event.getY();
 
             boolean clickedOnTower = false;
+            
             for (tower t : towers) {
                 double imageViewX = t.getTowerPane().getLayoutX();
                 double imageViewY = t.getTowerPane().getLayoutY();
@@ -465,6 +524,7 @@ public class Controller {
                 {
                     if(t.getTowerPane().getChildren().contains(t.getTowerImageRange()))
                     {
+                        //newTower.setPlaced(true);
                         t.getTowerPane().getChildren().remove(t.getTowerImageRange());
                         t.getTowerPane().setLayoutX(t.getTowerPane().getLayoutX() + t.rangeRadius / 2 - t.imagewidth/2);
                         t.getTowerPane().setLayoutY(t.getTowerPane().getLayoutY() + t.rangeRadius / 2 - t.imageheight/2);
