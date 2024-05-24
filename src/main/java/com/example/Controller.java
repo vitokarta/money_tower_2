@@ -244,9 +244,8 @@ public class Controller {
             @Override
             public void handle(long now) {
                 checkTargetPosition();
-                rotateAllMonkeysTowardsTarget();
+                //rotateAllMonkeysTowardsTarget();
                 updateAllProjectiles();
-                rotateAllProjectilesTowardsTarget();
                 //checkAndShootBullets();
             }
         };
@@ -274,6 +273,9 @@ public class Controller {
             t.attackDelayCounter++;
             if (t.isTargetInRange(targetX, targetY)) {
                 t.shoot(root, targetX, targetY);
+                if (!t.towerType.equals("Snag") && !t.towerType.equals("Banana Tree")) {
+                    t.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
+                    }
             }
         }
         /* */
@@ -326,19 +328,15 @@ public class Controller {
     }
     
 
-    private void rotateAllMonkeysTowardsTarget() {
+    /*private void rotateAllMonkeysTowardsTarget() {
         for (tower t : towers) {
             if (!t.towerType.equals("Snag") && !t.towerType.equals("Banana Tree")) {
             t.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
             }
         }
-    }
+    }*/
     
-    private void rotateAllProjectilesTowardsTarget() {
-        for (Projectile p : projectiles) {
-            p.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
-        }
-    }
+    
 
     private void reduceHealth() {
         if (health > 0) {

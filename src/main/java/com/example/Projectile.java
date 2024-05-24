@@ -34,13 +34,17 @@ public class Projectile {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        projectileImageView.setFitWidth(40);
-        projectileImageView.setFitHeight(40);
+        Point2D projectileSize = tower.getProjectileSize();
+        double projectileWidth = projectileSize.getX();
+        double projectileHeight = projectileSize.getY();
+        projectileImageView.setFitWidth(projectileWidth);
+        projectileImageView.setFitHeight(projectileHeight);
+
         Point2D startCoordinates = tower.getStartCoordinates();
         double startX = startCoordinates.getX();
         double startY = startCoordinates.getY();
-        projectileImageView.setLayoutX(startX - 40 / 2);
-        projectileImageView.setLayoutY(startY - 40 / 2);
+        projectileImageView.setLayoutX(startX - projectileWidth / 2);
+        projectileImageView.setLayoutY(startY - projectileHeight / 2);
         root.getChildren().add(projectileImageView);
 
         this.speed = speed;
@@ -51,6 +55,8 @@ public class Projectile {
         directionX = deltaX / distance;
         directionY = deltaY / distance;
         distanceTravelled = 0;
+
+        rotateTowards(targetX, targetY);
     }
 
     public void move() {

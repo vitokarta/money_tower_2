@@ -186,73 +186,9 @@ public class tower {
     }
 	
 	
-	/*public void shootBullet(double targetX, double targetY, AnchorPane root) {
-		if (bulletIsPlaced) return;
-	
-		Circle bullet = new Circle(5, Color.BLACK);
-		double startX;
-		double startY;
-	
-		if (towerPane.getChildren().contains(towerImageRange)) {
-			startX = towerPane.getLayoutX() + rangeRadius / 2;
-			startY = towerPane.getLayoutY() + rangeRadius / 2;
-		} else {
-			startX = towerPane.getLayoutX() + towerImageView.getFitWidth() / 2;
-			startY = towerPane.getLayoutY() + towerImageView.getFitHeight() / 2;
-		}
-		bullet.setLayoutX(startX);
-		bullet.setLayoutY(startY);
-		root.getChildren().add(bullet);
-	
-		double deltaX = targetX - startX;
-		double deltaY = targetY - startY;
-		double angle = Math.atan2(deltaY, deltaX);
-		double speed = projectileSpeed; // 使用projectileSpeed
-	
-		bulletIsPlaced = true;
-	
-		AnimationTimer timer = new AnimationTimer() {
-			@Override
-			public void handle(long now) {
-				bullet.setLayoutX(bullet.getLayoutX() + Math.cos(angle) * speed);
-				bullet.setLayoutY(bullet.getLayoutY() + Math.sin(angle) * speed);
-	
-				if (reachedTarget(bullet, targetX, targetY) || isOutOfBounds(bullet, root)) {
-					root.getChildren().remove(bullet);
-					stop();
-					bulletIsPlaced = false;
-	
-					// 仅在达到攻击延迟计数时发射下一颗子弹
-					attackDelayCounter++;
-					if (attackDelayCounter >= attackDelayTick) {
-						attackDelayCounter = 0;
-						Platform.runLater(() -> {
-							shootBullet(targetX, targetY, root); // 发射下一颗子弹
-						});
-					}
-				}
-			}
-		};
-		timer.start();
-	}
-	
-	private boolean isOutOfBounds(Circle bullet, AnchorPane root) {
-		return bullet.getLayoutX() < 0 || bullet.getLayoutX() > root.getWidth() || bullet.getLayoutY() < 0 || bullet.getLayoutY() > root.getHeight();
-	}
-	
-	private boolean reachedTarget(Circle bullet, double targetX, double targetY) {
-		double bulletX = bullet.getLayoutX();
-		double bulletY = bullet.getLayoutY();
-		double distance = Math.sqrt(Math.pow(targetX - bulletX, 2) + Math.pow(targetY - bulletY, 2));
-		return distance < 5;
-	}*/
-	
     public void shoot(AnchorPane root, double targetX, double targetY) {
 		if(!bulletIsPlaced) return;
         if (attackDelayCounter >= attackDelayTick) {
-			Point2D startCoordinates = getStartCoordinates();
-        	double startX = startCoordinates.getX();
-        	double startY = startCoordinates.getY();
             Projectile projectile = new Projectile(root, this, targetX, targetY, projectileSpeed,this.rangeRadius);
             Controller.projectiles.add(projectile);
             attackDelayCounter = 0;
@@ -345,6 +281,36 @@ public class tower {
 				return "resouce\\bullet\\lightball5.png";
 			default:
 				return "resouce\\bullet.png"; // 默认子弹图像路径
+		}
+	}
+	public Point2D getProjectileSize() {
+		switch (towerType) {
+			case "Monkey":
+				return new Point2D(40, 40); // 子弹宽度和高度
+			case "Snag":
+				return new Point2D(40, 40);
+			case "Banana Tree":
+				return new Point2D(40, 40);
+			case "Battleship":
+				return new Point2D(40, 40);
+			case "Cannon":
+				return new Point2D(40, 40);
+			case "Boomerange":
+				return new Point2D(40, 40);
+			case "IceMonkey":
+				return new Point2D(40, 40);
+			case "NinjaMonkey":
+				return new Point2D(40, 40);
+			case "Painter":
+				return new Point2D(40, 40);
+			case "Sniper":
+				return new Point2D(40, 40);
+			case "Wizard":
+				return new Point2D(80,80);
+			case "SuperMonkey":
+				return new Point2D(40, 40);
+			default:
+				return new Point2D(40, 40); // 默认子弹宽度和高度
 		}
 	}
 	
