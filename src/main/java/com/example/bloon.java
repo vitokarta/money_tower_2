@@ -30,6 +30,8 @@ public class bloon {
     private static final Image ZEBRA = new Image("file:@..//..//resouce//bloon//Zebra.png");
     private static final Image RAINBOW = new Image("file:@..//..//resouce//bloon//Rainbow.png");
     private static final Image CERAMIC = new Image("file:@..//..//resouce//bloon//Ceramic.png");
+    private static final Image MOAB = new Image("file:@..//..//resouce//bloon//MOAB.png");
+
 
 
     private String type;
@@ -37,8 +39,8 @@ public class bloon {
     private int health;
     private int moneyValue;
     private double speed=1.0;
-    private int width;
-    private int height;
+    private double width;
+    private double height;
     private SVGPath path;
     private PathTransition transition;
     private AnchorPane root ;
@@ -46,6 +48,8 @@ public class bloon {
     public boolean isRemoved = false;
     public bloon(String type, AnchorPane root , double progress) {
         this.type = type;
+        width = 40;
+        height = 40;
         if (type.equals("R")) {
 			//health = 1;
 			//moneyValue = 2;
@@ -142,15 +146,13 @@ public class bloon {
 			health = 200;
 			moneyValue = 200;
 			speed *= 1;
-			//width = (double)MOABbloonImage.getWidth(null);
-			//height = (double)MOABbloonImage.getHeight(null);
+			width = MOAB.getWidth();
+			height = MOAB.getHeight();
 			//freezeImmunity = true;
 			//glueImmunity = true;
 		}
         this.imageView = new ImageView(getbloonImage(type));
         
-        width = 40;
-        height = 40;
         this.imageView.toFront();
         this.imageView.setFitWidth(width);
         this.imageView.setFitHeight(height);
@@ -177,7 +179,9 @@ public class bloon {
     private void startAnimation(double progress) {
         this.transition = new PathTransition(Duration.millis(10000 / this.speed), this.path, this.imageView);
         this.transition.setInterpolator(Interpolator.LINEAR);
-        
+        if(type.equals("MOAB")){
+            this.transition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+        }
         this.transition.jumpTo(Duration.millis(10000 / this.speed *progress));
         this.transition.setOnFinished((ActionEvent event) -> {
             root.getChildren().remove(this.imageView);
@@ -288,6 +292,7 @@ public class bloon {
             case "Zebra":return ZEBRA;
             case "Rainbow":return RAINBOW;
             case "Ceramic":return CERAMIC;
+            case "MOAB":return MOAB;
             default: return null;
         }
     }
