@@ -123,7 +123,7 @@ public class Controller {
 
         //start
         start.setOnAction(event -> bloonStart());
-
+        setButtonHandlers(monkey, "resouce\\monkey.png", 50, 50, 150);
         setButtonHandlers(snag, "resouce\\snag.png", 50, 50, 250);
         setButtonHandlers(bananatree, "resouce\\bananatree.png", 60, 60, 750);
         setButtonHandlers(battleship, "resouce\\battleship.png", 60, 60, 400);
@@ -230,20 +230,11 @@ public class Controller {
             public void handle(long now) {
                 checkTargetPosition();
                 updateAllProjectiles();
-                
-                //checkAndShootBullets();
             }
         };
         timer.start();
     }
     private void updateAllProjectiles() {
-        double targetX = target.getLayoutX();
-        double targetY = target.getLayoutY();
-        
-        updateProjectile(root, targetX+target.getFitWidth()/2, targetY +target.getFitHeight()/2);
-        
-    }
-    public void updateProjectile(AnchorPane root, double targetX, double targetY) {
         List<Projectile> toRemove = new ArrayList<>();
         for(Projectile p : projectiles){
             p.move();
@@ -255,20 +246,11 @@ public class Controller {
         }
         projectiles.removeAll(toRemove);
 
-
-
         for(tower t : towers){
             t.attackDelayCounter++;
             t.checkIfCanAddProjectile(root,bloons);
-
-            /*if (t.isTargetInRange(targetX, targetY)) {
-                t.shoot(root, targetX, targetY);
-                if (!t.towerType.equals("Snag") && !t.towerType.equals("Banana Tree")) {
-                    t.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
-                    }
-            }*/
         }
-    
+
     }
 
 

@@ -19,6 +19,7 @@ import java.awt.event.*;
 import java.awt.geom.*;
 public class Projectile {
     public ImageView projectileImageView;
+    public int durability=2;
     public double speed;
     public double directionX;
     public double directionY;
@@ -57,12 +58,15 @@ public class Projectile {
         distanceTravelled = 0;
     }
 
+    private Set<bloon> collidedBloons= new HashSet<>();; // 記錄已碰撞的氣球
     public void checkForCollision(List<bloon> bloonsList, AnchorPane root) {
         List<bloon> toRemove = new ArrayList<>();
         for (bloon b : bloonsList) {
-            if (checkCollision(projectileImageView, b.imageView)) {
-                isRemoved = true;
-                b.handleCollision();
+            if (!collidedBloons.contains(b) && checkCollision(projectileImageView, b.imageView)) {
+                
+                if(--durability<=0)
+                    isRemoved = true;
+                collidedBloons.addAll((b.handleCollision()));
                 if(b.isRemoved)
                     toRemove.add(b);
                 break;
