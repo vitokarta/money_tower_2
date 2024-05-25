@@ -1,15 +1,19 @@
 package com.example;
-
+import javafx.geometry.Point2D;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 public class tower {
     private ImageView towerImageView;
     private ImageView towerImageRange;
@@ -32,7 +36,10 @@ public class tower {
 
 	private Image Image2;
 	private Image Image3;
-
+	private boolean bulletIsPlaced = false;
+	
+	public int attackDelayCounter = 0;
+    //private List<Projectile> projectiles = new ArrayList<>();
     public tower(AnchorPane root,String imagePath ,double imageWidth, double imageHeight) {
         if (imagePath.equals("resouce\\monkey.png")) {
 			attackPower = 1;
@@ -52,11 +59,11 @@ public class tower {
 		}
 		else if (imagePath.equals("resouce\\sniper.png")) {
 			attackPower = 5;
-			rangeRadius = 1000; //infinite
+			rangeRadius = 10000; //infinite
 			costValue = 350;
 			sellValue = costValue /2 ;
 			attackDelayTick = 66;
-			projectileSpeed = 10; //very fast
+			projectileSpeed = 100; //very fast
 		}
 
         else if (imagePath.equals("resouce\\boomerange.png")) {
@@ -149,7 +156,7 @@ public class tower {
 		towerPane = new StackPane();
         towerImageView.setFitWidth(imageWidth);
         towerImageView.setFitHeight(imageHeight);
-        towerImageRange.setFitWidth(rangeRadius);
+        towerImageRange.setFitWidth(rangeRadius);  //直徑
         towerImageRange.setFitHeight(rangeRadius);
         towerImageRange.setOpacity(0.8);
 	
@@ -175,7 +182,111 @@ public class tower {
 				Controller.getInstance().increaseMoneyByAmount(this.sellValue); // 增加金錢數值
         	}
         });
+		
     }
+	
+	
+	/*public void shootBullet(double targetX, double targetY, AnchorPane root) {
+		if (bulletIsPlaced) return;
+	
+		Circle bullet = new Circle(5, Color.BLACK);
+		double startX;
+		double startY;
+	
+		if (towerPane.getChildren().contains(towerImageRange)) {
+			startX = towerPane.getLayoutX() + rangeRadius / 2;
+			startY = towerPane.getLayoutY() + rangeRadius / 2;
+		} else {
+			startX = towerPane.getLayoutX() + towerImageView.getFitWidth() / 2;
+			startY = towerPane.getLayoutY() + towerImageView.getFitHeight() / 2;
+		}
+		bullet.setLayoutX(startX);
+		bullet.setLayoutY(startY);
+		root.getChildren().add(bullet);
+	
+		double deltaX = targetX - startX;
+		double deltaY = targetY - startY;
+		double angle = Math.atan2(deltaY, deltaX);
+		double speed = projectileSpeed; // 使用projectileSpeed
+	
+		bulletIsPlaced = true;
+	
+		AnimationTimer timer = new AnimationTimer() {
+			@Override
+			public void handle(long now) {
+				bullet.setLayoutX(bullet.getLayoutX() + Math.cos(angle) * speed);
+				bullet.setLayoutY(bullet.getLayoutY() + Math.sin(angle) * speed);
+	
+				if (reachedTarget(bullet, targetX, targetY) || isOutOfBounds(bullet, root)) {
+					root.getChildren().remove(bullet);
+					stop();
+					bulletIsPlaced = false;
+	
+					// 仅在达到攻击延迟计数时发射下一颗子弹
+					attackDelayCounter++;
+					if (attackDelayCounter >= attackDelayTick) {
+						attackDelayCounter = 0;
+						Platform.runLater(() -> {
+							shootBullet(targetX, targetY, root); // 发射下一颗子弹
+						});
+					}
+				}
+			}
+		};
+		timer.start();
+	}
+	
+	private boolean isOutOfBounds(Circle bullet, AnchorPane root) {
+		return bullet.getLayoutX() < 0 || bullet.getLayoutX() > root.getWidth() || bullet.getLayoutY() < 0 || bullet.getLayoutY() > root.getHeight();
+	}
+	
+	private boolean reachedTarget(Circle bullet, double targetX, double targetY) {
+		double bulletX = bullet.getLayoutX();
+		double bulletY = bullet.getLayoutY();
+		double distance = Math.sqrt(Math.pow(targetX - bulletX, 2) + Math.pow(targetY - bulletY, 2));
+		return distance < 5;
+	}*/
+	
+    public void shoot(AnchorPane root, double targetX, double targetY) {
+		if(!bulletIsPlaced) return;
+        if (attackDelayCounter >= attackDelayTick) {
+			Point2D startCoordinates = getStartCoordinates();
+        	double startX = startCoordinates.getX();
+        	double startY = startCoordinates.getY();
+            Projectile projectile = new Projectile(root, this, targetX, targetY, projectileSpeed,this.rangeRadius);
+            Controller.projectiles.add(projectile);
+            attackDelayCounter = 0;
+        }
+    }
+
+    public Point2D getStartCoordinates() {
+		double startX;
+		double startY;
+	
+		if (towerPane.getChildren().contains(towerImageRange)) {
+			startX = towerPane.getLayoutX() + rangeRadius / 2;
+			startY = towerPane.getLayoutY() + rangeRadius / 2;
+		} else {
+			startX = towerPane.getLayoutX() + towerImageView.getFitWidth() / 2;
+			startY = towerPane.getLayoutY() + towerImageView.getFitHeight() / 2;
+		}
+	
+		return new Point2D(startX, startY);
+	}
+	
+    public boolean isTargetInRange(double targetX, double targetY) {
+		Point2D startCoordinates = getStartCoordinates();
+        double startX = startCoordinates.getX();
+        double startY = startCoordinates.getY();
+		double deltaX = targetX - startX;
+		double deltaY = targetY - startY;
+        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        return distance <= rangeRadius/2;
+    }
+
+    /*public List<Projectile> getProjectiles() {
+        return projectiles;
+    }*/
 	public String getName(String imagePath) {
 		switch (imagePath) {
 			case "resouce\\monkey.png":
@@ -206,6 +317,41 @@ public class tower {
 				return "Unknown";
 		}
 	}
+	public String getProjectileImagePath() {
+		switch (towerType) {
+			case "Monkey":
+				return "resouce\\bullet\\dart.png";
+			case "Snag":
+				return "resouce\\bullet\\dart.png";
+			case "Banana Tree":
+				return "resouce\\bullet\\banana.png";
+			case "Battleship":
+				return "resouce\\bullet\\bomb.png";
+			case "Cannon":
+				return "resouce\\bullet\\bomb.png";
+			case "Boomerange":
+				return "resouce\\bullet\\boomeranges.png";
+			case "IceMonkey":
+				return "resouce\\bullet\\dart.png";
+			case "NinjaMonkey":
+				return "resouce\\bullet\\Shuriken.png";
+			case "Painter":
+				return "resouce\\bullet\\glue.png";
+			case "Sniper":
+				return "resouce\\bullet\\dart.png";
+			case "Wizard":
+				return "resouce\\bullet\\fireball.png";
+			case "SuperMonkey":
+				return "resouce\\bullet\\lightball5.png";
+			default:
+				return "resouce\\bullet.png"; // 默认子弹图像路径
+		}
+	}
+	
+	public void setPlaced(boolean placed) {
+		bulletIsPlaced = placed;
+	}
+	
 	
     public ImageView getTowerImageView() {
         return towerImageView;
@@ -219,9 +365,11 @@ public class tower {
     }
 	public void switchToImage2() {
         towerImageRange.setImage(Image2);
+		
     }
 	public void switchToImage3() {
         towerImageRange.setImage(Image3);
+		//this.bulletIsPlaced = true;
     }
 
     public void placeTower(AnchorPane root, double x, double y) {
@@ -229,22 +377,14 @@ public class tower {
         towerPane.setLayoutY(y);
         root.getChildren().add(towerPane);
 		Controller.getInstance().decreaseMoneyByAmount(this.costValue); // 花錢買猴
+		
     }
 	public void rotateTowards(double targetX, double targetY) {
-		double x;
-		double y;
-		
-		if(towerPane.getChildren().contains(towerImageRange)){
-			x=towerPane.getLayoutX()+ rangeRadius / 2;
-			y=towerPane.getLayoutY()+ rangeRadius / 2;
-		}
-		else{
-			x=towerPane.getLayoutX()+ towerImageView.getFitWidth()/2;
-			y=towerPane.getLayoutY()+ towerImageView.getFitHeight()/2;
-
-		}
-        double deltaX = targetX - x;
-        double deltaY = targetY - y;
+		Point2D startCoordinates = getStartCoordinates();
+        double startX = startCoordinates.getX();
+        double startY = startCoordinates.getY();
+        double deltaX = targetX - startX;
+        double deltaY = targetY - startY;
         double angle = Math.toDegrees(Math.atan2(deltaY, deltaX)) + 90;
 		if (towerType.equals("Battleship")) {
 			Platform.runLater(() -> towerImageView.setRotate(angle + 90));
