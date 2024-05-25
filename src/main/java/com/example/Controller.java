@@ -201,18 +201,20 @@ public class Controller {
         if (currentIndex < types.size()) {
             String type = types.get(currentIndex);
             int amount = amounts.get(currentIndex);
-
             Timeline timeline = new Timeline(new KeyFrame(Duration.millis(delay), event -> {
                 bloons.add(new bloon(type, root,0));
             }));
             timeline.setCycleCount(amount);
 
             timeline.setOnFinished(event -> {
-                currentIndex++;
-                playNextAnimation(root, delay); // 递归调用，播放下一个动画
+                PauseTransition pause = new PauseTransition(Duration.millis(delay));
+                    pause.setOnFinished(e -> {
+                        playNextAnimation(root, delay);
+                    });
+                    pause.play();
             });
-
-            timeline.play();
+            currentIndex++;
+            timeline.playFrom(Duration.millis(delay -1));  
         }
     }
 
