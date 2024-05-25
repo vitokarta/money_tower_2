@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.Group;
 public class bloon {
     private static int cun=0;
     private static final Image RED = new Image("file:@..//..//resouce//bloon//R.jpg");
@@ -31,10 +32,13 @@ public class bloon {
     private static final Image ZEBRA = new Image("file:@..//..//resouce//bloon//Zebra.png");
     private static final Image RAINBOW = new Image("file:@..//..//resouce//bloon//Rainbow.png");
     private static final Image CERAMIC = new Image("file:@..//..//resouce//bloon//Ceramic.png");
+    private static final Image GLUE = new Image("file:@..//..//resouce//glue.png");
 
 
-    private String type;
+    public String type;
     public ImageView imageView;
+    public ImageView glueimage = new ImageView(GLUE);
+    public Group imageGroup;
     private int health;
     private int moneyValue;
     private double speed=1.0;
@@ -42,9 +46,12 @@ public class bloon {
     private int height;
     private SVGPath path;
     private PathTransition transition;
+    private PathTransition transition2;
     private AnchorPane root ;
     private double progress;
     public boolean isRemoved = false;
+    public boolean isglue = false;
+    
     public bloon(String type, AnchorPane root , double progress) {
         this.type = type;
         if (type.equals("R")) {
@@ -155,11 +162,11 @@ public class bloon {
         this.imageView.toFront();
         this.imageView.setFitWidth(width);
         this.imageView.setFitHeight(height);
-        this.imageView.setTranslateX(-1000);
+        this.imageView.setTranslateX(-20000);
+        glueimage.setFitWidth(width);
+        glueimage.setFitHeight(height*1.2);
+        glueimage.setTranslateX(-20000);
         this.root=root;
-
-        //root.getChildren().add(this.imageView);
-        
 
         try {
             Path filePath = Paths.get("resouce//svg.txt");
@@ -176,17 +183,47 @@ public class bloon {
     }
 
     private void startAnimation(double progress) {
+        imageGroup = new Group();
+        //imageGroup.getChildren().add(this.imageView);        
+        
         this.transition = new PathTransition(Duration.millis(10000 / this.speed), this.path, this.imageView);
         root.getChildren().add(this.imageView);
+        //root.getChildren().add(imageGroup);
         this.transition.setInterpolator(Interpolator.LINEAR);
-        
-        this.transition.jumpTo(Duration.millis(10000 / this.speed *progress));
+
+        this.transition.jumpTo(Duration.millis(10000 / this.speed * progress));
         this.transition.setOnFinished((ActionEvent event) -> {
-            root.getChildren().remove(this.imageView);
+            root.getChildren().remove(imageView);
+            //System.out.println(imageView.getTranslateX()+" "+imageView.getTranslateY());
             Controller.removeBloon(this);
-            //System.out.println("hihi");
         });
         this.transition.play();
+    }
+    public void isglue(){
+        root.getChildren().remove(imageView);
+        double currentTime = transition.getCurrentTime().toMillis();
+        double oldTotalDuration = transition.getTotalDuration().toMillis();
+        progress = currentTime / oldTotalDuration;
+        transition.stop();
+        
+        transition = new PathTransition(Duration.millis(10000 / this.speed*2), this.path, this.imageView);
+        root.getChildren().add(imageView);
+        transition.setInterpolator(Interpolator.LINEAR);
+        transition.jumpTo(Duration.millis(10000 / this.speed *2 * progress));
+        transition.setOnFinished((ActionEvent event) -> {
+            root.getChildren().remove(imageView);
+            Controller.removeBloon(this);
+        });
+        this.transition.play();
+
+        transition2 = new PathTransition(Duration.millis(10000 / this.speed *2), this.path, glueimage);
+        root.getChildren().add(glueimage);
+        transition2.jumpTo(Duration.millis(10000 / this.speed *2 * progress));
+        transition2.setOnFinished((ActionEvent event) -> {
+            root.getChildren().remove(glueimage);
+        });
+        transition2.setInterpolator(Interpolator.LINEAR);
+        transition2.play();
     }
 
     
@@ -199,13 +236,15 @@ public class bloon {
         List<bloon> newBloons = new ArrayList<>();
         if (!type.equals("R")) {
             newBloons=breakIntobloons();
-        //new bloon(nextType, root,progress+0.05+0.05); // Create a new bloon with the next type
         }
-        //showTemporaryImage(root, this.imageView.getTranslateX(), this.imageView.getTranslateY());
-        root.getChildren().remove(this.imageView);
         isRemoved = true;
-        //Controller.removeBloon(this);
+        root.getChildren().remove(imageView);
         this.transition.stop();
+        if(root.getChildren().contains(glueimage))
+        {
+            root.getChildren().remove(glueimage);
+            transition2.stop();
+        }
         System.out.println(cun++);
         return newBloons;
     }
@@ -251,7 +290,7 @@ public class bloon {
                 newBloons.add(bloon);
                 break;
             case "Camo":
-                bloon = new bloon("Pink", root, progress);
+                bloon = new bloon("P", root, progress);
                 Controller.bloons.add(bloon);
                 newBloons.add(bloon);
                 break;

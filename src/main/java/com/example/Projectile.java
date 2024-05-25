@@ -23,7 +23,7 @@ import java.awt.event.*;
 import java.awt.geom.*;
 public class Projectile {
     public ImageView projectileImageView;
-    public int durability=2;
+    public int durability=1;
     public double speed;
     public double directionX;
     public double directionY;
@@ -33,6 +33,8 @@ public class Projectile {
     public double rangeRadius;
     public boolean isRemoved = false;
     public tower tower;
+
+
     public Projectile(AnchorPane root, tower tower, double targetX, double targetY, int speed,  int rangeRadius) {
         this.tower = tower;
         String imagePath = tower.getProjectileImagePath();
@@ -68,11 +70,31 @@ public class Projectile {
         List<bloon> overlap = new ArrayList<>();
         for (bloon b : bloonsList) {
             if (!collidedBloons.contains(b) && checkCollision(projectileImageView, b.imageView)) {
-                if(tower.towerType.equals("Cannon"))
+                if(b.type.equals("Camo"))
+                {
+                    if(tower.towerType.equals("Sniper")||tower.towerType.equals("NinjaMonkey"))
+                    {
+                        if(--durability<=0)
+                            isRemoved = true;
+                        collidedBloons.addAll((b.handleCollision()));
+                        if(b.isRemoved)
+                            toRemove.add(b);
+                        break;
+                    }
+                }
+                else if(tower.towerType.equals("Cannon"))
                 {
                     isRemoved = true;
                     //toRemove.addAll(checkexplosion(root, b.imageView.getTranslateX(), b.imageView.getTranslateY(), bloonsList));
                     overlap=checkexplosion(root, bloonsList);
+                }
+                else if(tower.towerType.equals("Painter"))
+                {
+                    if(b.isglue==false)
+                    {
+                        b.isglue();
+                        b.isglue=true;
+                    }
                 }
                 else
                 {

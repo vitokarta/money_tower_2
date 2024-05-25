@@ -102,11 +102,11 @@ public class tower {
 		}
 		else if (imagePath.equals("resouce\\painter.png")) {
 			attackPower = 0;
-			rangeRadius = 380;
+			rangeRadius = 200;
 			costValue = 250;
 			sellValue = costValue /2;
-			attackDelayTick = 31;
-			projectileSpeed = 4;
+			attackDelayTick = 100;
+			projectileSpeed = 8;
 		}
 		else if (imagePath.equals("resouce\\supermonkey.png")) {
 			attackPower = 2;
@@ -141,7 +141,7 @@ public class tower {
 			rangeRadius = 200;
 			costValue = 750;
 			sellValue = costValue /2;
-			attackDelayTick = 15;
+			attackDelayTick = 5;
 			projectileSpeed = 3;
 		}
 		this.towerType=getName(imagePath);
@@ -198,16 +198,30 @@ public class tower {
 
         //check all Bloon objects on screen 
         for (bloon b : bloonsList) {
-		
             double targetX=b.imageView.getTranslateX()+b.imageView.getFitWidth()/2;
 			double targetY=b.imageView.getTranslateY()+b.imageView.getFitHeight()/2;
+			//System.out.println(targetX+" "+targetY);
             if (isTargetInRange(targetX, targetY)) {
-                bloonInRadius = true;
-			    checkDistance = (int) Math.sqrt(Math.pow(targetX - this.x, 2) + Math.pow(targetY - this.y, 2));
-                if (checkDistance < shortestDistance) {
-                    shortestDistance = checkDistance;
-                    closestBloon = b; // 保存最近的 bloon 对象
-                }
+				if(!b.type.equals("Camo")) {
+					bloonInRadius = true;
+					checkDistance = (int) Math.sqrt(Math.pow(targetX - this.x, 2) + Math.pow(targetY - this.y, 2));
+					if (checkDistance < shortestDistance) {
+						shortestDistance = checkDistance;
+						closestBloon = b; // 保存最近的 bloon 对象
+					}
+				}
+				else
+				{
+					if(towerType.equals("NinjaMonkey")||towerType.equals("Sniper")) {
+						bloonInRadius = true;
+						checkDistance = (int) Math.sqrt(Math.pow(targetX - this.x, 2) + Math.pow(targetY - this.y, 2));
+						if (checkDistance < shortestDistance) {
+							shortestDistance = checkDistance;
+							closestBloon = b; // 保存最近的 bloon 对象
+						}
+					}
+				}
+                
             }
         }
 		if(closestBloon!=null) {
