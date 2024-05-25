@@ -9,6 +9,8 @@ import javafx.animation.PathTransition;
 import javafx.event.ActionEvent;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -156,10 +158,10 @@ public class bloon {
         this.imageView.toFront();
         this.imageView.setFitWidth(width);
         this.imageView.setFitHeight(height);
-        this.imageView.setTranslateX(-100);
+        this.imageView.setTranslateX(-1000);
         this.root=root;
 
-        root.getChildren().add(this.imageView);
+        //root.getChildren().add(this.imageView);
         
 
         try {
@@ -178,6 +180,7 @@ public class bloon {
 
     private void startAnimation(double progress) {
         this.transition = new PathTransition(Duration.millis(10000 / this.speed), this.path, this.imageView);
+        root.getChildren().add(this.imageView);
         this.transition.setInterpolator(Interpolator.LINEAR);
         if(type.equals("MOAB")){
             this.transition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
@@ -207,73 +210,114 @@ public class bloon {
         return iv1.getBoundsInParent().intersects(iv2.getBoundsInParent())|| iv1.getBoundsInParent().intersects(iv3.getBoundsInParent());
     }*/
 
-    public void handleCollision() {
+    public List<bloon> handleCollision() {
         double currentTime = this.transition.getCurrentTime().toMillis();
         double oldTotalDuration = this.transition.getTotalDuration().toMillis();
         this.progress = currentTime / oldTotalDuration;
         
-
+        List<bloon> newBloons = new ArrayList<>();
         if (!type.equals("R")) {
-            breakIntobloons();
-           //new bloon(nextType, root,progress+0.05+0.05); // Create a new bloon with the next type
+            newBloons=breakIntobloons();
+        //new bloon(nextType, root,progress+0.05+0.05); // Create a new bloon with the next type
         }
         root.getChildren().remove(this.imageView);
         isRemoved = true;
         //Controller.removeBloon(this);
         this.transition.stop();
         System.out.println(cun++);
-        //timer.stop();
+        return newBloons;
     }
 
-    public void breakIntobloons() {
+    public List<bloon> breakIntobloons() {
+        List<bloon> newBloons = new ArrayList<>();
+        bloon bloon;
         switch (type) {
             case "B":
-                Controller.bloons.add(new bloon("R", root, progress));
+                bloon = new bloon("R", root, progress);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
                 break;
             case "G":
-                Controller.bloons.add(new bloon("B", root, progress));
+                bloon = new bloon("B", root, progress);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
                 break;
             case "Y":
-                Controller.bloons.add(new bloon("G", root, progress));
+                bloon = new bloon("G", root, progress);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
                 break;
             case "P":
-                Controller.bloons.add(new bloon("Y", root, progress));
+                bloon = new bloon("Y", root, progress);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
                 break;
             case "Black":
-                Controller.bloons.add(new bloon("P", root, progress));
-                Controller.bloons.add(new bloon("P", root, progress));
+                bloon = new bloon("P", root, progress);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
+                bloon = new bloon("P", root, progress+0.001);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
                 break;
             case "White":
-                Controller.bloons.add(new bloon("P", root, progress));
-                Controller.bloons.add(new bloon("P", root, progress));
+                bloon = new bloon("P", root, progress);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
+                bloon = new bloon("P", root, progress+0.001);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
                 break;
             case "Camo":
-                Controller.bloons.add(new bloon("Pink", root, progress));
+                bloon = new bloon("Pink", root, progress);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
                 break;
             case "Lead":
-                Controller.bloons.add(new bloon("Black", root, progress ));
-                Controller.bloons.add(new bloon("Black", root, progress ));
+                bloon = new bloon("Black", root, progress);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
+                bloon = new bloon("Black", root, progress+0.001);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
                 break;
             case "Zebra":
-                Controller.bloons.add(new bloon("Black", root, progress));
-                Controller.bloons.add(new bloon("White", root, progress));
+                bloon = new bloon("Black", root, progress);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
+                bloon = new bloon("White", root, progress+0.001);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
                 break;
             case "Rainbow":
-                Controller.bloons.add(new bloon("Zebra", root, progress));
-                Controller.bloons.add(new bloon("Zebra", root, progress));
+                bloon = new bloon("Zebra", root, progress);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
+                bloon = new bloon("Zebra", root, progress+0.001);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
                 break;
             case "Ceramic":
-                Controller.bloons.add(new bloon("Rainbow", root, progress));
-                Controller.bloons.add(new bloon("Rainbow", root, progress));
+                bloon = new bloon("Rainbow", root, progress);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
+                bloon = new bloon("Rainbow", root, progress+0.001);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
                 break;
             case "MOAB":
-                Controller.bloons.add(new bloon("Ceramic", root, progress));
-                Controller.bloons.add(new bloon("Ceramic", root, progress));
+                bloon = new bloon("Ceramic", root, progress);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
+                bloon = new bloon("Ceramic", root, progress+0.001);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
                 break;
             default:
                 // Default case if type does not match any of the above
                 break;
         }
+        return newBloons;
     }
     
 

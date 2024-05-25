@@ -92,15 +92,16 @@ public class Controller {
 
     private int health = 500; // 血條初始值
     private int money = 10000; // 金錢初始值
-    private int round = 1; // 回合初始值
+    private int round = 0; // 回合初始值
     private int cost = 0;
-    private final int totalRounds = 40; // 總回合數
+    private int totalRounds = 40; // 總回合數
     private ImageView target; // 目標物
 
     private static List<tower> towers = new ArrayList<>();
     //public static List<Projectile> projectiles = new ArrayList<>();
     public static List<bloon> bloons = new ArrayList<>();
     public static ArrayList<Projectile> projectiles = new ArrayList<>();
+    private List<String> levels = new ArrayList<>();
 
     private ManualMap manualMap = new ManualMap("resouce\\map1.jpg");
     private static Controller instance;
@@ -114,6 +115,17 @@ public class Controller {
     }
     @FXML
     private void initialize() {
+        //讀關卡
+        try {
+            Scanner scanner = new Scanner(new File("resouce//stage1.txt"));
+            totalRounds = scanner.nextInt();
+            scanner.nextLine();
+            while (scanner.hasNextLine()) {
+                levels.add(scanner.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         // 初始化顯示猴子價格的按鈕
 
         // 鼠標移動事件，用於移動所有動態創建的ImageView
@@ -123,7 +135,7 @@ public class Controller {
 
         //start
         start.setOnAction(event -> bloonStart());
-
+        setButtonHandlers(monkey, "resouce\\monkey.png", 50, 50, 150);
         setButtonHandlers(snag, "resouce\\snag.png", 50, 50, 250);
         setButtonHandlers(bananatree, "resouce\\bananatree.png", 60, 60, 750);
         setButtonHandlers(battleship, "resouce\\battleship.png", 60, 60, 400);
@@ -157,20 +169,27 @@ public class Controller {
     private List<String> types = new ArrayList<>();
     private List<Integer> amounts = new ArrayList<>();
     private int currentIndex = 0;
+    private int currentStage = 0;
     private void bloonStart(){
-        //bloons.Bloon_Generate(root);
-        Scanner scanner;
-        try {
-            scanner = new Scanner(new File("resouce//stage1.txt"));
-            total = scanner.nextInt();
-            while (scanner.hasNext()) {
-                String type = scanner.next();
-                int amount = scanner.nextInt();
+        //types.clear();
+        //amounts.clear();
+        Scanner stage_scanner = new Scanner(levels.get(currentStage));
+        if (stage_scanner.hasNextInt()) {
+            total = stage_scanner.nextInt();
+        }
+
+        while (stage_scanner.hasNext()) {
+            String type = stage_scanner.next();
+            if (stage_scanner.hasNextInt()) {
+                int amount = stage_scanner.nextInt();
                 types.add(type);
                 amounts.add(amount);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        }
+        if (currentStage <= levels.size()){
+            currentStage++;
+            round++;
+            updateRoundLabel();
         }
         int delays = 6000/total;
         if (!types.isEmpty() && !amounts.isEmpty()) {
