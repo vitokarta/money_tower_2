@@ -91,16 +91,17 @@ public class Controller {
     private AnchorPane root;
 
     private int health = 500; // 血條初始值
-    private int money = 2500; // 金錢初始值
+    private int money = 10000; // 金錢初始值
     private int round = 1; // 回合初始值
     private int cost = 0;
     private final int totalRounds = 40; // 總回合數
     private ImageView target; // 目標物
 
-    public static List<tower> towers = new ArrayList<>();
+    private static List<tower> towers = new ArrayList<>();
+    //public static List<Projectile> projectiles = new ArrayList<>();
     public static List<bloon> bloons = new ArrayList<>();
-    public static List<Projectile> projectiles = new ArrayList<>();
-    
+    public static ArrayList<Projectile> projectiles = new ArrayList<>();
+
     private ManualMap manualMap = new ManualMap("resouce\\map1.jpg");
     private static Controller instance;
 
@@ -111,32 +112,9 @@ public class Controller {
     public static Controller getInstance() {
         return instance;
     }
-
-    static public ImageView targetImageView;
-    static public ImageView targetImageView2;
     @FXML
     private void initialize() {
         // 初始化顯示猴子價格的按鈕
-        //bloons= new bloon(root);
-        try {
-            Image target_img = new Image(new FileInputStream("resouce//bloon.png"));
-            targetImageView = new ImageView(target_img);
-            targetImageView2 = new ImageView(target_img);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
-        targetImageView.setFitHeight(70);
-        targetImageView.setFitWidth(70);
-        targetImageView.setLayoutX(550); // 设置目标图片的X位置
-        targetImageView.setLayoutY(550); // 设置目标图片的Y位置
-        targetImageView.setOpacity(0.5);
-        targetImageView2.setFitHeight(70);
-        targetImageView2.setFitWidth(70);
-        targetImageView2.setLayoutX(350); // 设置目标图片的X位置
-        targetImageView2.setLayoutY(350);
-        root.getChildren().add(targetImageView);
-        root.getChildren().add(targetImageView2);
 
         // 鼠標移動事件，用於移動所有動態創建的ImageView
         root.setOnMouseMoved(this::handleMouseMoved);
@@ -146,8 +124,6 @@ public class Controller {
         //start
         start.setOnAction(event -> bloonStart());
 
-
-        setButtonHandlers(monkey, "resouce\\monkey.png", 50, 50, 150);
         setButtonHandlers(snag, "resouce\\snag.png", 50, 50, 250);
         setButtonHandlers(bananatree, "resouce\\bananatree.png", 60, 60, 750);
         setButtonHandlers(battleship, "resouce\\battleship.png", 60, 60, 400);
@@ -181,7 +157,6 @@ public class Controller {
     private List<String> types = new ArrayList<>();
     private List<Integer> amounts = new ArrayList<>();
     private int currentIndex = 0;
-    
     private void bloonStart(){
         //bloons.Bloon_Generate(root);
         Scanner scanner;
@@ -254,9 +229,8 @@ public class Controller {
             @Override
             public void handle(long now) {
                 checkTargetPosition();
-                rotateAllMonkeysTowardsTarget();
                 updateAllProjectiles();
-                rotateAllProjectilesTowardsTarget();
+                
                 //checkAndShootBullets();
             }
         };
@@ -270,43 +244,35 @@ public class Controller {
         
     }
     public void updateProjectile(AnchorPane root, double targetX, double targetY) {
-        Iterator<Projectile> iterator = projectiles.iterator();
-        while (iterator.hasNext()) {
-			//System.out.println("123");
-            Projectile projectile = iterator.next();
-            projectile.move();
-            if (projectile.isRemoved()) {
-                root.getChildren().remove(projectile.getProjectileImageView());
-                iterator.remove();
+        List<Projectile> toRemove = new ArrayList<>();
+        for(Projectile p : projectiles){
+            p.move();
+            p.checkForCollision(bloons,root);
+            if(p.isRemoved()) {
+                root.getChildren().remove(p.getProjectileImageView());
+                toRemove.add(p);
             }
         }
+        projectiles.removeAll(toRemove);
+
+
+
         for(tower t : towers){
             t.attackDelayCounter++;
-            if (t.isTargetInRange(targetX, targetY)) {
+            t.checkIfCanAddProjectile(root,bloons);
+
+            /*if (t.isTargetInRange(targetX, targetY)) {
                 t.shoot(root, targetX, targetY);
-            }
+                if (!t.towerType.equals("Snag") && !t.towerType.equals("Banana Tree")) {
+                    t.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
+                    }
+            }*/
         }
-        /* */
+    
     }
 
 
-    
 
-    /*private void checkAndShootBullets() {
-
-        for (tower t : towers) {
-            double towerCenterX = t.getTowerPane().getLayoutX() + t.getTowerImageView().getFitWidth() / 2;
-            double towerCenterY = t.getTowerPane().getLayoutY() + t.getTowerImageView().getFitHeight() / 2;
-            double targetCenterX = target.getLayoutX() + target.getFitWidth() / 2;
-            double targetCenterY = target.getLayoutY() + target.getFitHeight() / 2;
-
-            double distance = Math.sqrt(Math.pow(targetCenterX - towerCenterX, 2) + Math.pow(targetCenterY - towerCenterY, 2));
-            
-            if (distance <= t.rangeRadius) {
-                t.shootBullet(targetCenterX, targetCenterY, root);
-            }
-        }
-    }*/
     private void checkTargetPosition() {
         double x = target.getLayoutX();
         double y = target.getLayoutY();
@@ -335,20 +301,6 @@ public class Controller {
         });
     }
     
-
-    private void rotateAllMonkeysTowardsTarget() {
-        for (tower t : towers) {
-            if (!t.towerType.equals("Snag") && !t.towerType.equals("Banana Tree")) {
-            t.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
-            }
-        }
-    }
-    
-    private void rotateAllProjectilesTowardsTarget() {
-        for (Projectile p : projectiles) {
-            p.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
-        }
-    }
 
     private void reduceHealth() {
         if (health > 0) {

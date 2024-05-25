@@ -46,12 +46,12 @@
       <children>
             <ImageView fitHeight="600.0" fitWidth="205.0" layoutX="847.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                <image>
-                  <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/sidebar.jpg" />
+                  <Image url="file:/C:/java/project/money_tower_2/resouce/sidebar.jpg" />
                </image>
             </ImageView>
             <ImageView fitHeight="600.0" fitWidth="885.0" layoutX="-6.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-6.0" AnchorPane.topAnchor="0.0">
                <image>
-                  <Image url="file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/file_Object%20Removal.jpg" />
+                  <Image url="file:/C:/java/project/money_tower_2/resouce/file_Object%20Removal.jpg" />
                </image>
             </ImageView>
             <ImageView fitHeight="60.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">

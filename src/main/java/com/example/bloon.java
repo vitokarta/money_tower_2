@@ -33,7 +33,7 @@ public class bloon {
 
 
     private String type;
-    private ImageView imageView;
+    public ImageView imageView;
     private int health;
     private int moneyValue;
     private double speed=1.0;
@@ -43,6 +43,7 @@ public class bloon {
     private PathTransition transition;
     private AnchorPane root ;
     private double progress;
+    public boolean isRemoved = false;
     public bloon(String type, AnchorPane root , double progress) {
         this.type = type;
         if (type.equals("R")) {
@@ -146,22 +147,16 @@ public class bloon {
 			//freezeImmunity = true;
 			//glueImmunity = true;
 		}
-
-        /*try {
-            Image Image2 = new Image(new FileInputStream("resouce\\bloon\\Black.png"));
-            this.imageView = new ImageView(Image2);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }*/
-
         this.imageView = new ImageView(getbloonImage(type));
         
-        
+        width = 40;
+        height = 40;
         this.imageView.toFront();
-        this.imageView.setFitWidth(40);
-        this.imageView.setFitHeight(40);
-        
+        this.imageView.setFitWidth(width);
+        this.imageView.setFitHeight(height);
+        this.imageView.setTranslateX(-100);
         this.root=root;
+
         root.getChildren().add(this.imageView);
         
 
@@ -191,7 +186,7 @@ public class bloon {
         });
         this.transition.play();
 
-        AnimationTimer timer = new AnimationTimer() {
+        /*AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if (checkCollision(imageView, Controller.targetImageView,Controller.targetImageView2)) {
@@ -201,14 +196,14 @@ public class bloon {
                 }
             }
         };
-        timer.start();
+        timer.start();*/
     }
 
-    private boolean checkCollision(ImageView iv1, ImageView iv2,ImageView iv3) {
+    /*private boolean checkCollision(ImageView iv1, ImageView iv2,ImageView iv3) {
         return iv1.getBoundsInParent().intersects(iv2.getBoundsInParent())|| iv1.getBoundsInParent().intersects(iv3.getBoundsInParent());
-    }
+    }*/
 
-    private void handleCollision(AnimationTimer timer) {
+    public void handleCollision() {
         double currentTime = this.transition.getCurrentTime().toMillis();
         double oldTotalDuration = this.transition.getTotalDuration().toMillis();
         this.progress = currentTime / oldTotalDuration;
@@ -219,55 +214,57 @@ public class bloon {
            //new bloon(nextType, root,progress+0.05+0.05); // Create a new bloon with the next type
         }
         root.getChildren().remove(this.imageView);
-        Controller.removeBloon(this);
+        isRemoved = true;
+        //Controller.removeBloon(this);
         this.transition.stop();
-        timer.stop();
+        System.out.println(cun++);
+        //timer.stop();
     }
 
     public void breakIntobloons() {
         switch (type) {
             case "B":
-                Controller.bloons.add(new bloon("R", root, progress + 0.05));
+                Controller.bloons.add(new bloon("R", root, progress));
                 break;
             case "G":
-                Controller.bloons.add(new bloon("B", root, progress + 0.05));
+                Controller.bloons.add(new bloon("B", root, progress));
                 break;
             case "Y":
-                Controller.bloons.add(new bloon("G", root, progress + 0.05));
+                Controller.bloons.add(new bloon("G", root, progress));
                 break;
             case "P":
-                Controller.bloons.add(new bloon("Y", root, progress + 0.05));
+                Controller.bloons.add(new bloon("Y", root, progress));
                 break;
             case "Black":
-                Controller.bloons.add(new bloon("P", root, progress + 0.05));
-                Controller.bloons.add(new bloon("P", root, progress + 0.05));
+                Controller.bloons.add(new bloon("P", root, progress));
+                Controller.bloons.add(new bloon("P", root, progress));
                 break;
             case "White":
-                Controller.bloons.add(new bloon("P", root, progress + 0.05));
-                Controller.bloons.add(new bloon("P", root, progress + 0.05));
+                Controller.bloons.add(new bloon("P", root, progress));
+                Controller.bloons.add(new bloon("P", root, progress));
                 break;
             case "Camo":
-                Controller.bloons.add(new bloon("Pink", root, progress + 0.05));
+                Controller.bloons.add(new bloon("Pink", root, progress));
                 break;
             case "Lead":
-                Controller.bloons.add(new bloon("Black", root, progress + 0.05));
-                Controller.bloons.add(new bloon("Black", root, progress + 0.05));
+                Controller.bloons.add(new bloon("Black", root, progress ));
+                Controller.bloons.add(new bloon("Black", root, progress ));
                 break;
             case "Zebra":
-                Controller.bloons.add(new bloon("Black", root, progress + 0.05));
-                Controller.bloons.add(new bloon("White", root, progress + 0.05));
+                Controller.bloons.add(new bloon("Black", root, progress));
+                Controller.bloons.add(new bloon("White", root, progress));
                 break;
             case "Rainbow":
-                Controller.bloons.add(new bloon("Zebra", root, progress + 0.05));
-                Controller.bloons.add(new bloon("Zebra", root, progress + 0.05));
+                Controller.bloons.add(new bloon("Zebra", root, progress));
+                Controller.bloons.add(new bloon("Zebra", root, progress));
                 break;
             case "Ceramic":
-                Controller.bloons.add(new bloon("Rainbow", root, progress + 0.05));
-                Controller.bloons.add(new bloon("Rainbow", root, progress + 0.05));
+                Controller.bloons.add(new bloon("Rainbow", root, progress));
+                Controller.bloons.add(new bloon("Rainbow", root, progress));
                 break;
             case "MOAB":
-                Controller.bloons.add(new bloon("Ceramic", root, progress + 0.05));
-                Controller.bloons.add(new bloon("Ceramic", root, progress + 0.05));
+                Controller.bloons.add(new bloon("Ceramic", root, progress));
+                Controller.bloons.add(new bloon("Ceramic", root, progress));
                 break;
             default:
                 // Default case if type does not match any of the above

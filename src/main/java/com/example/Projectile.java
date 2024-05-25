@@ -1,12 +1,15 @@
 package com.example;
 
 import javax.swing.ImageIcon;
+
+
 import javafx.geometry.Point2D;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import java.util.*;
+import java.util.List;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.image.*;
@@ -15,15 +18,16 @@ import java.io.FileNotFoundException;
 import java.awt.event.*;
 import java.awt.geom.*;
 public class Projectile {
-    private ImageView projectileImageView;
-    private double speed;
-    private double directionX;
-    private double directionY;
-    private int attack;
-    private double distanceTravelled;
-    private double rangeRadius;
-    private boolean isRemoved = false;
-    private tower tower;
+    public ImageView projectileImageView;
+    public double speed;
+    public double directionX;
+    public double directionY;
+    public int attack;
+    public int health;
+    public double distanceTravelled;
+    public double rangeRadius;
+    public boolean isRemoved = false;
+    public tower tower;
     public Projectile(AnchorPane root, tower tower, double targetX, double targetY, int speed,  int rangeRadius) {
         this.tower = tower;
         String imagePath = tower.getProjectileImagePath();
@@ -52,6 +56,24 @@ public class Projectile {
         directionY = deltaY / distance;
         distanceTravelled = 0;
     }
+
+    public void checkForCollision(List<bloon> bloonsList, AnchorPane root) {
+        List<bloon> toRemove = new ArrayList<>();
+        for (bloon b : bloonsList) {
+            if (checkCollision(projectileImageView, b.imageView)) {
+                isRemoved = true;
+                b.handleCollision();
+                if(b.isRemoved)
+                    toRemove.add(b);
+                break;
+            }
+        }
+        bloonsList.removeAll(toRemove);
+    }
+    public boolean checkCollision(ImageView iv1, ImageView iv2) {
+        return iv1.getBoundsInParent().intersects(iv2.getBoundsInParent());
+    }
+
 
     public void move() {
         projectileImageView.setLayoutX(projectileImageView.getLayoutX() + directionX * speed);
