@@ -1,4 +1,4 @@
 20
 R 20
-Black 5
-White 5
+B 5
+G 5

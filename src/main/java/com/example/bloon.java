@@ -9,7 +9,6 @@ import javafx.animation.PathTransition;
 import javafx.event.ActionEvent;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -188,23 +187,9 @@ public class bloon {
             //System.out.println("hihi");
         });
         this.transition.play();
-
-        /*AnimationTimer timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                if (checkCollision(imageView, Controller.targetImageView,Controller.targetImageView2)) {
-                    System.out.println("Collision Detected!");
-                    System.out.println(cun++);
-                    handleCollision(this);
-                }
-            }
-        };
-        timer.start();*/
     }
 
-    /*private boolean checkCollision(ImageView iv1, ImageView iv2,ImageView iv3) {
-        return iv1.getBoundsInParent().intersects(iv2.getBoundsInParent())|| iv1.getBoundsInParent().intersects(iv3.getBoundsInParent());
-    }*/
+    
 
     public List<bloon> handleCollision() {
         double currentTime = this.transition.getCurrentTime().toMillis();
@@ -216,6 +201,7 @@ public class bloon {
             newBloons=breakIntobloons();
         //new bloon(nextType, root,progress+0.05+0.05); // Create a new bloon with the next type
         }
+        //showTemporaryImage(root, this.imageView.getTranslateX(), this.imageView.getTranslateY());
         root.getChildren().remove(this.imageView);
         isRemoved = true;
         //Controller.removeBloon(this);

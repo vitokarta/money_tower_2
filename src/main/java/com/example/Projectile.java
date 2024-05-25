@@ -3,6 +3,10 @@ package com.example;
 import javax.swing.ImageIcon;
 
 
+import javafx.util.Duration;
+
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
 import javafx.geometry.Point2D;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
@@ -61,16 +65,32 @@ public class Projectile {
     private Set<bloon> collidedBloons= new HashSet<>();; // 記錄已碰撞的氣球
     public void checkForCollision(List<bloon> bloonsList, AnchorPane root) {
         List<bloon> toRemove = new ArrayList<>();
+        List<bloon> overlap = new ArrayList<>();
         for (bloon b : bloonsList) {
             if (!collidedBloons.contains(b) && checkCollision(projectileImageView, b.imageView)) {
-                
-                if(--durability<=0)
+                if(tower.towerType.equals("Cannon"))
+                {
                     isRemoved = true;
-                collidedBloons.addAll((b.handleCollision()));
-                if(b.isRemoved)
-                    toRemove.add(b);
-                break;
+                    //toRemove.addAll(checkexplosion(root, b.imageView.getTranslateX(), b.imageView.getTranslateY(), bloonsList));
+                    overlap=checkexplosion(root, bloonsList);
+                }
+                else
+                {
+                    if(--durability<=0)
+                        isRemoved = true;
+                    collidedBloons.addAll((b.handleCollision()));
+                    if(b.isRemoved)
+                        toRemove.add(b);
+                    break;
+                }
+                
             }
+        }
+        for(bloon b : overlap)
+        {
+            b.handleCollision();
+            if(b.isRemoved)
+                toRemove.add(b);
         }
         bloonsList.removeAll(toRemove);
     }
@@ -105,5 +125,34 @@ public class Projectile {
         double angle = Math.toDegrees(Math.atan2(deltaY, deltaX)) + 90;
 		Platform.runLater(() -> projectileImageView.setRotate(angle));
         
+    }
+    private List<bloon> checkexplosion(AnchorPane root ,List<bloon> bloonsList) {
+        System.out.println("hihi");
+        Image image = new Image("file:@..//..//resouce//explosion.png");
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(100); // 設置圖片寬度
+        imageView.setFitHeight(100); // 設置圖片高度
+        
+        imageView.setTranslateX(projectileImageView.getLayoutX() + projectileImageView.getFitWidth() / 2 - imageView.getFitWidth() / 2);//
+        imageView.setTranslateY(projectileImageView.getLayoutY() + projectileImageView.getFitHeight() / 2 - imageView.getFitHeight() / 2);//- imageView.getFitHeight() / 2
+        imageView.setVisible(true);
+        root.getChildren().add(imageView);
+
+        List<bloon> overlap = new ArrayList<>();
+        List<bloon> toRemove = new ArrayList<>();
+
+        // 創建一個Timeline來控制圖片顯示時間
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.05), e -> {
+            root.getChildren().remove(imageView); // 1秒後移除圖片
+        }));
+        timeline.setCycleCount(1);
+        timeline.play();
+
+        for (bloon b : bloonsList) {
+            if (checkCollision(imageView, b.imageView)) {
+                overlap.add(b);
+            }
+        }
+        return overlap;
     }
 }
