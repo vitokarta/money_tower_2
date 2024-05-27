@@ -110,14 +110,13 @@ public class tower {
 		}
 		else if (imagePath.equals("resouce\\supermonkey.png")) {
 			attackPower = 2;
-			//rangeRadius = 500;
-			rangeRadius = 1000;
+			rangeRadius = 500;
 			costValue = 3000;
 			sellValue = costValue /2;
-			attackDelayTick = 10;
+			attackDelayTick = 5;
 			//attackDelayTick = 10;
 			//projectileSpeed = 5;
-			projectileSpeed = 10;
+			projectileSpeed = 15;
 		}
 		else if (imagePath.equals("resouce\\battleship.png")) {
 			attackPower = 3;

@@ -23,16 +23,21 @@ import java.awt.event.*;
 import java.awt.geom.*;
 public class Projectile {
     public ImageView projectileImageView;
-    public int durability=1;
+    public int durability=2;
     public double speed;
     public double directionX;
     public double directionY;
-    public int attack;
+    public int attack=2;
     public int health;
     public double distanceTravelled;
     public double rangeRadius;
     public boolean isRemoved = false;
     public tower tower;
+
+    private SoundPlayer ceramicBloonHit = new SoundPlayer("resouce\\sound\\Ceramic_damage.wav");
+	private SoundPlayer pop = new SoundPlayer("resouce\\sound\\Bloon_Pop.wav");
+
+	
 
 
     public Projectile(AnchorPane root, tower tower, double targetX, double targetY, int speed,  int rangeRadius) {
@@ -70,7 +75,54 @@ public class Projectile {
         List<bloon> overlap = new ArrayList<>();
         for (bloon b : bloonsList) {
             if (!collidedBloons.contains(b) && checkCollision(projectileImageView, b.imageView)) {
-                if(b.type.equals("Camo"))
+                if(tower.towerType.equals("Painter") && b.glueable && b.Visible)
+                {
+                    if(b.isglue==false)
+                    {
+                        b.isglue();
+                        b.isglue=true;
+                    }
+                }
+                else if(tower.towerType.equals("Cannon") && b.Visible)
+                {
+                    isRemoved = true;
+                    //toRemove.addAll(checkexplosion(root, b.imageView.getTranslateX(), b.imageView.getTranslateY(), bloonsList));
+                    overlap=checkexplosion(root, bloonsList);
+                }
+                else if(tower.towerType.equals("Sniper")||tower.towerType.equals("NinjaMonkey"))
+                {
+                    if(!b.sharpImmunity)
+                    {
+                        if(--durability<=0)
+                            isRemoved = true;
+                        collidedBloons.addAll((b.handleCollision(attack)));
+                        if(b.isRemoved)
+                            toRemove.add(b);
+                        break;
+                    }
+                    else
+                        isRemoved = true;
+                }
+                else if(!b.sharpImmunity && b.Visible)
+                {
+                    if(--durability<=0)
+                        isRemoved = true;
+                    collidedBloons.addAll((b.handleCollision(attack)));
+                    if(b.isRemoved)
+                        toRemove.add(b);
+                    break;
+                }
+                else if(b.sharpImmunity)
+                {
+                    ceramicBloonHit.play(false);
+                    isRemoved = true;
+                }
+                    
+                
+
+
+                
+                /*if(b.type.equals("Camo"))
                 {
                     if(tower.towerType.equals("Sniper")||tower.towerType.equals("NinjaMonkey"))
                     {
@@ -82,13 +134,20 @@ public class Projectile {
                         break;
                     }
                 }
-                else if(tower.towerType.equals("Cannon"))
+                else if(b.type.equals("Lead"))
                 {
-                    isRemoved = true;
-                    //toRemove.addAll(checkexplosion(root, b.imageView.getTranslateX(), b.imageView.getTranslateY(), bloonsList));
-                    overlap=checkexplosion(root, bloonsList);
+                    if(tower.towerType.equals("Cannon")||tower.towerType.equals("SuperMonkey"))
+                    {
+                        if(--durability<=0)
+                            isRemoved = true;
+                        collidedBloons.addAll((b.handleCollision()));
+                        if(b.isRemoved)
+                            toRemove.add(b);
+                        break;
+                    }
                 }
-                else if(tower.towerType.equals("Painter"))
+                
+                else if(tower.towerType.equals("Painter") && b.glueImmunity == false)
                 {
                     if(b.isglue==false)
                     {
@@ -104,16 +163,19 @@ public class Projectile {
                     if(b.isRemoved)
                         toRemove.add(b);
                     break;
-                }
+                }*/
                 
             }
         }
         for(bloon b : overlap)
         {
-            b.handleCollision();
+            b.handleCollision(attack);
             if(b.isRemoved)
                 toRemove.add(b);
         }
+        
+        if(toRemove.size()>0)
+            pop.play();
         bloonsList.removeAll(toRemove);
     }
     public boolean checkCollision(ImageView iv1, ImageView iv2) {
@@ -125,7 +187,7 @@ public class Projectile {
         projectileImageView.setLayoutX(projectileImageView.getLayoutX() + directionX * speed);
         projectileImageView.setLayoutY(projectileImageView.getLayoutY() + directionY * speed);
         distanceTravelled += speed;
-        if (distanceTravelled > rangeRadius) {
+        if (distanceTravelled > rangeRadius *0.75) {
             isRemoved = true;
         }
     }
@@ -149,7 +211,6 @@ public class Projectile {
         
     }
     private List<bloon> checkexplosion(AnchorPane root ,List<bloon> bloonsList) {
-        System.out.println("hihi");
         Image image = new Image("file:@..//..//resouce//explosion.png");
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(100); // 設置圖片寬度
@@ -171,7 +232,7 @@ public class Projectile {
         timeline.play();
 
         for (bloon b : bloonsList) {
-            if (checkCollision(imageView, b.imageView)) {
+            if (checkCollision(imageView, b.imageView) && b.Visible) {
                 overlap.add(b);
             }
         }

@@ -90,8 +90,8 @@ public class Controller {
     @FXML
     private AnchorPane root;
 
-    private int health = 500; // 血條初始值
-    private int money = 10000; // 金錢初始值
+    public static int health = 500; // 血條初始值
+    public static int money = 10000; // 金錢初始值
     private int round = 1; // 回合初始值
     private int cost = 0;
     private final int totalRounds = 40; // 總回合數
@@ -114,7 +114,9 @@ public class Controller {
     }
     @FXML
     private void initialize() {
-        // 初始化顯示猴子價格的按鈕
+        // play music
+        SoundPlayer game = new SoundPlayer("resouce\\sound\\Title Music.wav");
+        game.play(true);
 
         // 鼠標移動事件，用於移動所有動態創建的ImageView
         root.setOnMouseMoved(this::handleMouseMoved);
@@ -137,7 +139,7 @@ public class Controller {
         setButtonHandlers(supermonkey, "resouce\\supermonkey.png", 50, 50, 3000);
 
         // 初始化血條和目標物
-        updateHealthLabel();
+        
         updateMoneyLabel();
         updateRoundLabel();
         updateCostLabel();
@@ -230,6 +232,7 @@ public class Controller {
             public void handle(long now) {
                 checkTargetPosition();
                 updateAllProjectiles();
+                updateHealthLabel();
             }
         };
         timer.start();

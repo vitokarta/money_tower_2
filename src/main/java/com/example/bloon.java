@@ -41,7 +41,7 @@ public class bloon {
     public Group imageGroup;
     private int health;
     private int moneyValue;
-    private double speed=1.0;
+    private double speed=0.5f;
     private int width;
     private int height;
     private SVGPath path;
@@ -51,6 +51,9 @@ public class bloon {
     private double progress;
     public boolean isRemoved = false;
     public boolean isglue = false;
+    public boolean glueable = true;
+    public boolean sharpImmunity = false;
+    public boolean Visible = true;
     
     public bloon(String type, AnchorPane root , double progress) {
         this.type = type;
@@ -111,7 +114,7 @@ public class bloon {
 			speed *= 1;
 			//width = (double)camobloonImage.getWidth(null);
 			//height = (double)camobloonImage.getHeight(null);
-			//detectionImmunity = true;
+			Visible=false;
 		}
 		else if (type.equals("Lead")) {
 			health = 1;
@@ -119,7 +122,8 @@ public class bloon {
 			speed *= 1;
 			//width = (double)leadbloonImage.getWidth(null);
 			//height = (double)leadbloonImage.getHeight(null);
-			//sharpImmunity = true;
+			sharpImmunity = true;
+            glueable = false;
 		}
 		else if (type.equals("Zebra")) {
 			health = 1;
@@ -143,7 +147,7 @@ public class bloon {
 			speed *= 2.5;
 			//width = (double)ceramicbloonImage.getWidth(null);
 			//height = (double)ceramicbloonImage.getHeight(null);
-			//glueImmunity = true;
+			glueable = false;
 
 		}
 		else if (type.equals("MOAB")) {
@@ -153,7 +157,7 @@ public class bloon {
 			//width = (double)MOABbloonImage.getWidth(null);
 			//height = (double)MOABbloonImage.getHeight(null);
 			//freezeImmunity = true;
-			//glueImmunity = true;
+			glueable = false;
 		}
         this.imageView = new ImageView(getbloonImage(type));
         
@@ -177,7 +181,7 @@ public class bloon {
             e.printStackTrace();
         }
 
-        this.speed *= 1;
+        //this.speed *= 1;
 
         startAnimation(progress);
     }
@@ -195,6 +199,7 @@ public class bloon {
         this.transition.setOnFinished((ActionEvent event) -> {
             root.getChildren().remove(imageView);
             //System.out.println(imageView.getTranslateX()+" "+imageView.getTranslateY());
+            Controller.health-=TypeToHealth(type);
             Controller.removeBloon(this);
         });
         this.transition.play();
@@ -212,6 +217,7 @@ public class bloon {
         transition.jumpTo(Duration.millis(10000 / this.speed *2 * progress));
         transition.setOnFinished((ActionEvent event) -> {
             root.getChildren().remove(imageView);
+            Controller.health-=TypeToHealth(type);
             Controller.removeBloon(this);
         });
         this.transition.play();
@@ -228,28 +234,31 @@ public class bloon {
 
     
 
-    public List<bloon> handleCollision() {
-        double currentTime = this.transition.getCurrentTime().toMillis();
-        double oldTotalDuration = this.transition.getTotalDuration().toMillis();
-        this.progress = currentTime / oldTotalDuration;
-        
+    public List<bloon> handleCollision(int attack) {
         List<bloon> newBloons = new ArrayList<>();
-        if (!type.equals("R")) {
-            newBloons=breakIntobloons();
-        }
-        isRemoved = true;
-        root.getChildren().remove(imageView);
-        this.transition.stop();
-        if(root.getChildren().contains(glueimage))
+        health-= attack;
+        if(health<=0)
         {
-            root.getChildren().remove(glueimage);
-            transition2.stop();
+            double currentTime = this.transition.getCurrentTime().toMillis();
+            double oldTotalDuration = this.transition.getTotalDuration().toMillis();
+            this.progress = currentTime / oldTotalDuration;
+            
+            
+            newBloons=breakIntobloons(HealthToType(TypeToHealth(type)+health));
+            isRemoved = true;
+            root.getChildren().remove(imageView);
+            this.transition.stop();
+            if(root.getChildren().contains(glueimage))
+            {
+                root.getChildren().remove(glueimage);
+                transition2.stop();
+            }
+            //ystem.out.println(cun++);
         }
-        System.out.println(cun++);
         return newBloons;
     }
 
-    public List<bloon> breakIntobloons() {
+    public List<bloon> breakIntobloons(String type) {
         List<bloon> newBloons = new ArrayList<>();
         bloon bloon;
         switch (type) {
@@ -361,14 +370,40 @@ public class bloon {
         }
     }
 
-    /*private String bloonDestroy(String type) {
-        switch (type) {
-            case "R": return "0";
-            case "B": return "R";
-            case "G": return "B";
-            case "Y": return "G";
-            case "P": return "Y";
+    private String HealthToType(int health) {
+        switch (health) {
+            case 0: return "0";
+            case 1: return "R";
+            case 2: return "B";
+            case 3: return "G";
+            case 4: return "Y";
+            case 5: return "P";
+            case 6: return "Black";
+            case 7: return "White";
+            case 8: return "Lead";
+            case 9: return "Camo";
+            case 10: return "Zebra";
+            case 11: return "Rainbow";
+            case 12: return "Ceramic";
             default: return "0";
         }
-    }*/
+    }
+    private int TypeToHealth(String type) {
+        switch (type) {
+            case "0": return 0;
+            case "R": return 1;
+            case "B": return 2;
+            case "G": return 3;
+            case "Y": return 4;
+            case "P": return 5;
+            case "Black":return 6;
+            case "White":return 7;
+            case "Lead":return 8;
+            case "Camo":return 9;
+            case "Zebra":return 10;
+            case "Rainbow":return 11;
+            case "Ceramic":return 12;
+            default: return 0;
+        }
+    }
 }
