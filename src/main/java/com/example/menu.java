@@ -20,7 +20,7 @@ public class menu {
         startButton.setLayoutY(271.0);
         startButton.setOnAction(e -> {
             try {
-                switchToScene();
+                switchToStageMenu();
             } catch (IOException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
@@ -32,8 +32,8 @@ public class menu {
 
     }
     @FXML
-    private void switchToScene() throws IOException {
-        test.setRoot("scene");
+    private void switchToStageMenu() throws IOException {
+        test.setRoot("stage_menu");
     }
     @FXML
     private void hover() {

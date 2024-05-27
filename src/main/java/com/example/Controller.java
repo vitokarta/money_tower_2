@@ -66,7 +66,7 @@ public class Controller {
     @FXML
     private Button boomerange; 
     @FXML
-    private Button icemonkey; 
+    private Button snagtower; 
     @FXML
     private Button ninjamonkey; 
     @FXML
@@ -90,15 +90,17 @@ public class Controller {
     @FXML
     private AnchorPane root;
 
-    private int health = 500; // 血條初始值
-    private int money = 2500; // 金錢初始值
-    private int round = 1; // 回合初始值
+    public static int health = 500; // 血條初始值
+    public static int money = 25000; // 金錢初始值
+    private int round = 0; // 回合初始值
     private int cost = 0;
-    private final int totalRounds = 40; // 總回合數
+    private int totalRounds = 40; // 總回合數
     private ImageView target; // 目標物
 
     private static List<tower> towers = new ArrayList<>();
     public static List<Projectile> projectiles = new ArrayList<>();
+    public static List<bloon> bloons = new ArrayList<>();
+    private List<String> levels = new ArrayList<>();
     private ManualMap manualMap = new ManualMap("resouce\\map1.jpg");
     private static Controller instance;
 
@@ -111,7 +113,20 @@ public class Controller {
     }
     @FXML
     private void initialize() {
-        // 初始化顯示猴子價格的按鈕
+        // play music
+        SoundPlayer game = new SoundPlayer("resouce\\sound\\Title Music.wav");
+        game.play(true);
+        //讀關卡
+        try {
+            Scanner scanner = new Scanner(new File("resouce//stage1.txt"));
+            totalRounds = scanner.nextInt();
+            scanner.nextLine();
+            while (scanner.hasNextLine()) {
+                levels.add(scanner.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         // 鼠標移動事件，用於移動所有動態創建的ImageView
         root.setOnMouseMoved(this::handleMouseMoved);
@@ -122,25 +137,14 @@ public class Controller {
         start.setOnAction(event -> bloonStart());
 
         // 為每個按鈕設置事件處理程序
-        /*monkey.setOnAction(event -> handleButtonClick("resouce\\monkey.png", 50, 50, monkey));
-        snag.setOnAction(event -> handleButtonClick("resouce\\snag.png", 50, 50, snag));
-        bananatree.setOnAction(event -> handleButtonClick("resouce\\bananatree.png", 60, 60, bananatree));
-        battleship.setOnAction(event -> handleButtonClick("resouce\\battleship.png", 60, 60, battleship));
-        cannon.setOnAction(event -> handleButtonClick("resouce\\cannon.png", 50, 50, cannon));
-        boomerange.setOnAction(event -> handleButtonClick("resouce\\boomerange.png", 50, 50, boomerange));
-        icemonkey.setOnAction(event -> handleButtonClick("resouce\\icemonkey.png", 60, 60, icemonkey));
-        ninjamonkey.setOnAction(event -> handleButtonClick("resouce\\ninjamonkey.png", 60, 60, ninjamonkey)); // 特殊尺寸
-        painter.setOnAction(event -> handleButtonClick("resouce\\painter.png", 60, 60, painter));
-        sniper.setOnAction(event -> handleButtonClick("resouce\\sniper.png", 60, 80, sniper)); // 特殊尺寸
-        wizmonkey.setOnAction(event -> handleButtonClick("resouce\\wizmonkey.png", 50, 50, wizmonkey));
-        supermonkey.setOnAction(event -> handleButtonClick("resouce\\supermonkey.png", 50, 50, supermonkey));*/
+        
         setButtonHandlers(monkey, "resouce\\monkey.png", 50, 50, 150);
         setButtonHandlers(snag, "resouce\\snag.png", 50, 50, 250);
         setButtonHandlers(bananatree, "resouce\\bananatree.png", 60, 60, 750);
         setButtonHandlers(battleship, "resouce\\battleship.png", 60, 60, 400);
         setButtonHandlers(cannon, "resouce\\cannon.png", 50, 50, 650);
         setButtonHandlers(boomerange, "resouce\\boomerange.png", 50, 50, 350);
-        setButtonHandlers(icemonkey, "resouce\\icemonkey.png", 60, 60, 300);
+        setButtonHandlers(snagtower, "resouce\\snagtower.png", 60, 60, 300);
         setButtonHandlers(ninjamonkey, "resouce\\ninjamonkey.png", 60, 60, 300); // 特殊尺寸
         setButtonHandlers(painter, "resouce\\painter.png", 60, 60, 250);
         setButtonHandlers(sniper, "resouce\\sniper.png", 60, 80, 350); // 特殊尺寸
@@ -152,10 +156,11 @@ public class Controller {
 
         // 初始化血條和目標物
         updateHealthLabel();
+        updateHealthLabel();
         updateMoneyLabel();
         updateRoundLabel();
         updateCostLabel();
-        initializeTarget();
+        //initializeTarget();
         // 啟動計時器
         startTimer();
     }
@@ -171,21 +176,27 @@ public class Controller {
     private List<String> types = new ArrayList<>();
     private List<Integer> amounts = new ArrayList<>();
     private int currentIndex = 0;
-    bloon bloons= new bloon();
+    private int currentStage = 0;
     private void bloonStart(){
-        //bloons.Bloon_Generate(root);
-        Scanner scanner;
-        try {
-            scanner = new Scanner(new File("resouce//stage1.txt"));
-            total = scanner.nextInt();
-            while (scanner.hasNext()) {
-                String type = scanner.next();
-                int amount = scanner.nextInt();
+        //types.clear();
+        //amounts.clear();
+        Scanner stage_scanner = new Scanner(levels.get(currentStage));
+        if (stage_scanner.hasNextInt()) {
+            total = stage_scanner.nextInt();
+        }
+
+        while (stage_scanner.hasNext()) {
+            String type = stage_scanner.next();
+            if (stage_scanner.hasNextInt()) {
+                int amount = stage_scanner.nextInt();
                 types.add(type);
                 amounts.add(amount);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        }
+        if (currentStage <= levels.size()){
+            currentStage++;
+            round++;
+            updateRoundLabel();
         }
         int delays = 6000/total;
         if (!types.isEmpty() && !amounts.isEmpty()) {
@@ -199,16 +210,19 @@ public class Controller {
             int amount = amounts.get(currentIndex);
 
             Timeline timeline = new Timeline(new KeyFrame(Duration.millis(delay), event -> {
-                bloons.showBloon(root, type);
+                bloons.add(new bloon(type, root,0));
             }));
             timeline.setCycleCount(amount);
 
             timeline.setOnFinished(event -> {
-                currentIndex++;
-                playNextAnimation(root, delay); // 递归调用，播放下一个动画
+                PauseTransition pause = new PauseTransition(Duration.millis(delay));
+                    pause.setOnFinished(e -> {
+                        playNextAnimation(root, delay);
+                    });
+                    pause.play();
             });
-
-            timeline.play();
+            currentIndex++;
+            timeline.playFrom(Duration.millis(delay -1)); 
         }
     }
 
@@ -229,7 +243,7 @@ public class Controller {
     private void updateCostLabel() {
         costLabel.setText("Cost:" + cost);
     }
-    private void initializeTarget() {
+    /*private void initializeTarget() {
         // 初始化目標物(之後要考慮多顆氣球，或是那個點有氣球經過再做氣球類別判斷來扣血)
         target = new ImageView("file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/bloon.png");
         target.setFitWidth(50);
@@ -237,49 +251,58 @@ public class Controller {
         target.setLayoutX(0);
         target.setLayoutY(0);
         root.getChildren().add(target);
-    }
+    }*/
 
     private void startTimer() {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                checkTargetPosition();
+                //checkTargetPosition();
                 //rotateAllMonkeysTowardsTarget();
                 updateAllProjectiles();
+                updateHealthLabel();
                 //checkAndShootBullets();
+                for (tower t : towers) {
+                    if(t.bulletIsPlaced == true){ 
+                        if (t.towerType.equals("Banana Tree")) {
+                            t.shootBananas(root);
+                        } 
+                        else if(t.towerType.equals("SnagTower")){
+                            t.shootBananas(root);
+                        }
+                    }
+                }
             }
         };
         timer.start();
     }
     private void updateAllProjectiles() {
-        double targetX = target.getLayoutX();
-        double targetY = target.getLayoutY();
-        
-        updateProjectile(root, targetX+target.getFitWidth()/2, targetY +target.getFitHeight()/2);
-        
-    }
-    public void updateProjectile(AnchorPane root, double targetX, double targetY) {
-        Iterator<Projectile> iterator = projectiles.iterator();
-        while (iterator.hasNext()) {
-			//System.out.println("123");
-            Projectile projectile = iterator.next();
-            projectile.move();
-            if (projectile.isRemoved()) {
-                root.getChildren().remove(projectile.getProjectileImageView());
-                iterator.remove();
+        List<Projectile> toRemove = new ArrayList<>();
+        for(Projectile p : projectiles){
+            p.move();
+            p.checkForCollision(bloons,root);
+            if(p.isRemoved()) {
+                root.getChildren().remove(p.getProjectileImageView());
+                toRemove.add(p);
             }
         }
+        projectiles.removeAll(toRemove);
         for(tower t : towers){
             t.attackDelayCounter++;
-            if (t.isTargetInRange(targetX, targetY)) {
-                t.shoot(root, targetX, targetY);
+            t.checkIfCanAddProjectile(root,bloons);
+            /*if (t.isTargetInRange(targetX, targetY)) {
+                if (t.towerType.equals("Snag")) { // 检查 tower 类型是否为置钉器
+                    t.shootInAllDirections(root);
+                }
+                else t.shoot(root, targetX, targetY);
                 if (!t.towerType.equals("Snag") && !t.towerType.equals("Banana Tree")) {
                     t.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
-                    }
+                    }*/
             }
         }
-        /* */
-    }
+        
+    
+    
 
 
     
@@ -299,7 +322,7 @@ public class Controller {
             }
         }
     }*/
-    private void checkTargetPosition() {
+    /*private void checkTargetPosition() {
         double x = target.getLayoutX();
         double y = target.getLayoutY();
         double speed = 1.0; // 目标物移动的速度
@@ -325,7 +348,7 @@ public class Controller {
                 target.setLayoutY(y + speed);
             }
         });
-    }
+    }*/
     
 
     /*private void rotateAllMonkeysTowardsTarget() {
@@ -401,7 +424,7 @@ public class Controller {
         updateButtonStyle(battleship, money < 400, false);
         updateButtonStyle(cannon, money < 650, false);
         updateButtonStyle(boomerange, money < 350, false);
-        updateButtonStyle(icemonkey, money < 300, false);
+        updateButtonStyle(snagtower, money < 300, false);
         updateButtonStyle(ninjamonkey, money < 300, false);
         updateButtonStyle(painter, money < 250, false);
         updateButtonStyle(sniper, money < 350, false);
@@ -539,5 +562,8 @@ public class Controller {
     }
     public static void removeTower(tower t) {
         towers.remove(t);
+    }
+    public static void removeBloon(bloon b) {
+        bloons.remove(b);
     }
 }

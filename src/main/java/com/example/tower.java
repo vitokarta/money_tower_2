@@ -19,7 +19,8 @@ public class tower {
     private ImageView towerImageRange;
     private StackPane towerPane;
     public Button button;
-
+	public double x;
+	public double y;
     public String towerType;
 	public int attackPower;
 	public int rangeRadius;
@@ -36,7 +37,7 @@ public class tower {
 
 	private Image Image2;
 	private Image Image3;
-	private boolean bulletIsPlaced = false;
+	public boolean bulletIsPlaced = false;
 	
 	public int attackDelayCounter = 0;
     //private List<Projectile> projectiles = new ArrayList<>();
@@ -90,13 +91,13 @@ public class tower {
 			attackDelayTick = 47;
 			projectileSpeed = 4;
 		}
-		else if (imagePath.equals("resouce\\icemonkey.png")) {
-			attackPower = 0;
+		else if (imagePath.equals("resouce\\snagtower.png")) {
+			attackPower = 1;
 			rangeRadius = 100; //small
 			costValue = 300;
 			sellValue = costValue /2;
-			attackDelayTick = 73;
-			projectileSpeed = 0;
+			attackDelayTick = 100;
+			projectileSpeed = 2;
 		}
 		else if (imagePath.equals("resouce\\painter.png")) {
 			attackPower = 0;
@@ -112,7 +113,7 @@ public class tower {
 			costValue = 3000;
 			sellValue = costValue /2;
 			attackDelayTick = 10;
-			projectileSpeed = 5;
+			projectileSpeed = 10;
 		}
 		else if (imagePath.equals("resouce\\battleship.png")) {
 			attackPower = 3;
@@ -124,11 +125,11 @@ public class tower {
 		}
 		else if (imagePath.equals("resouce\\bananatree.png")) {
 			attackPower = 0;
-			rangeRadius = 60;
+			rangeRadius = 200;
 			costValue = 750;
 			sellValue = costValue /2;
 			attackDelayTick = 500;
-			projectileSpeed = 0;
+			projectileSpeed = 2;
 			moneyRate = 80;
 		}
 		else if (imagePath.equals("resouce\\wizmonkey.png")) {
@@ -136,8 +137,8 @@ public class tower {
 			rangeRadius = 200;
 			costValue = 750;
 			sellValue = costValue /2;
-			attackDelayTick = 15;
-			projectileSpeed = 3;
+			attackDelayTick = 5;
+			projectileSpeed = 10;
 		}
 		this.towerType=getName(imagePath);
 
@@ -184,18 +185,107 @@ public class tower {
         });
 		
     }
+	public void checkIfCanAddProjectile(AnchorPane root,List<bloon> bloonsList) {
+        boolean bloonInRadius = false; //used to check if a Bloon is within the rangeRadius of the Tower
+        int shortestDistance = Integer.MAX_VALUE; //shortest distance b/w the closest Bloon and the Tower
+        int checkDistance; //used to check for the smallest distance
+
+        bloon closestBloon = null; // 保存最近的 bloon 对象
+
+        //check all Bloon objects on screen 
+        for (bloon b : bloonsList) {
+		
+            double targetX=b.imageView.getTranslateX()+b.imageView.getFitWidth()/2;
+			double targetY=b.imageView.getTranslateY()+b.imageView.getFitHeight()/2;
+            if (isTargetInRange(targetX, targetY)) {
+				if(!b.type.equals("Camo")) {
+					bloonInRadius = true;
+					checkDistance = (int) Math.sqrt(Math.pow(targetX - this.x, 2) + Math.pow(targetY - this.y, 2));
+					if (checkDistance < shortestDistance) {
+						shortestDistance = checkDistance;
+						closestBloon = b; // 保存最近的 bloon 对象
+					}
+				}
+				else
+				{
+					if(towerType.equals("NinjaMonkey")||towerType.equals("Sniper")) {
+						bloonInRadius = true;
+						checkDistance = (int) Math.sqrt(Math.pow(targetX - this.x, 2) + Math.pow(targetY - this.y, 2));
+						if (checkDistance < shortestDistance) {
+							shortestDistance = checkDistance;
+							closestBloon = b; // 保存最近的 bloon 对象
+						}
+					}
+				}
+                
+            }
+        }
+		if(closestBloon!=null) {
+			double targetX=closestBloon.imageView.getTranslateX()+closestBloon.imageView.getFitWidth()/2;
+			double targetY=closestBloon.imageView.getTranslateY()+closestBloon.imageView.getFitHeight()/2;
+			//rotateTowards(targetX,targetY);
+			double angle = Math.toDegrees(Math.atan2(targetY - y, targetX - x)) + 90;
+            // rotateTowards(targetX,targetY);
+			
+            if (towerType.equals("Snag")  ) {
+                shootInAllDirections(root);
+            }
+			else if(!towerType.equals("Banana Tree") && (!towerType.equals("SnagTower"))){
+                rotateTowards(targetX, targetY);
+                shoot(root, angle);
+            }
+		}
+        return ;
+    }
 	
-	
-    public void shoot(AnchorPane root, double targetX, double targetY) {
+    public void shoot(AnchorPane root, double angle) {
 		if(!bulletIsPlaced) return;
         if (attackDelayCounter >= attackDelayTick) {
-            Projectile projectile = new Projectile(root, this, targetX, targetY, projectileSpeed,this.rangeRadius);
-            Controller.projectiles.add(projectile);
+			if(towerType == "Battleship") {
+				Projectile projectile = new Projectile(root, this, angle, projectileSpeed,this.rangeRadius, false);
+				Controller.projectiles.add(projectile);
+				Projectile projectile2 = new Projectile(root, this, angle + 180, projectileSpeed,this.rangeRadius, false);
+				Controller.projectiles.add(projectile2);
+			}
+			else{
+				Projectile projectile = new Projectile(root, this, angle, projectileSpeed,this.rangeRadius, false);
+				Controller.projectiles.add(projectile);
+			}
             attackDelayCounter = 0;
         }
     }
+	public void shootInAllDirections(AnchorPane root) {
+        if (!bulletIsPlaced) return; // 仅在猴子放置后才射击
+        if (attackDelayCounter >= attackDelayTick) {
+            getStartCoordinates();
+            double startX = x;
+            double startY = y;
 
-    public Point2D getStartCoordinates() {
+            double[] angles = {0, 45, 90, 135, 180, 225, 270, 315};
+
+            for (double angle : angles) {
+                Projectile projectile = new Projectile(root, this, angle, projectileSpeed, this.rangeRadius, false);
+                Controller.projectiles.add(projectile);
+            }
+            attackDelayCounter = 0;
+        }
+    }
+	public void shootBananas(AnchorPane root) {
+        //if (!towerType.equals("Banana Tree")) return;
+        if (attackDelayCounter >= attackDelayTick) {
+			double angle = Math.random() * 360;
+			if (towerType.equals("Banana Tree")){
+				Projectile banana = new Projectile(root, this, angle, projectileSpeed, rangeRadius, true);
+				Controller.projectiles.add(banana);
+			}
+			else{ // for snagtower
+				Projectile snags = new Projectile(root, this, angle, projectileSpeed, rangeRadius, true);
+				Controller.projectiles.add(snags);
+			}
+            attackDelayCounter = 0;
+        }
+    }
+    public void getStartCoordinates() {
 		double startX;
 		double startY;
 	
@@ -206,14 +296,15 @@ public class tower {
 			startX = towerPane.getLayoutX() + towerImageView.getFitWidth() / 2;
 			startY = towerPane.getLayoutY() + towerImageView.getFitHeight() / 2;
 		}
-	
-		return new Point2D(startX, startY);
+		x = startX;
+		y = startY;
+		
 	}
 	
     public boolean isTargetInRange(double targetX, double targetY) {
-		Point2D startCoordinates = getStartCoordinates();
-        double startX = startCoordinates.getX();
-        double startY = startCoordinates.getY();
+		getStartCoordinates();
+        double startX = x;
+        double startY = y;
 		double deltaX = targetX - startX;
 		double deltaY = targetY - startY;
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -237,8 +328,8 @@ public class tower {
 				return "Cannon";
 			case "resouce\\boomerange.png":
 				return "Boomerange";
-			case "resouce\\icemonkey.png":
-				return "IceMonkey";
+			case "resouce\\snagtower.png":
+				return "SnagTower";
 			case "resouce\\ninjamonkey.png":
 				return "NinjaMonkey";
 			case "resouce\\painter.png":
@@ -253,66 +344,7 @@ public class tower {
 				return "Unknown";
 		}
 	}
-	public String getProjectileImagePath() {
-		switch (towerType) {
-			case "Monkey":
-				return "resouce\\bullet\\dart.png";
-			case "Snag":
-				return "resouce\\bullet\\dart.png";
-			case "Banana Tree":
-				return "resouce\\bullet\\banana.png";
-			case "Battleship":
-				return "resouce\\bullet\\bomb.png";
-			case "Cannon":
-				return "resouce\\bullet\\bomb.png";
-			case "Boomerange":
-				return "resouce\\bullet\\boomeranges.png";
-			case "IceMonkey":
-				return "resouce\\bullet\\dart.png";
-			case "NinjaMonkey":
-				return "resouce\\bullet\\Shuriken.png";
-			case "Painter":
-				return "resouce\\bullet\\glue.png";
-			case "Sniper":
-				return "resouce\\bullet\\dart.png";
-			case "Wizard":
-				return "resouce\\bullet\\fireball.png";
-			case "SuperMonkey":
-				return "resouce\\bullet\\lightball5.png";
-			default:
-				return "resouce\\bullet.png"; // 默认子弹图像路径
-		}
-	}
-	public Point2D getProjectileSize() {
-		switch (towerType) {
-			case "Monkey":
-				return new Point2D(40, 40); // 子弹宽度和高度
-			case "Snag":
-				return new Point2D(40, 40);
-			case "Banana Tree":
-				return new Point2D(40, 40);
-			case "Battleship":
-				return new Point2D(40, 40);
-			case "Cannon":
-				return new Point2D(40, 40);
-			case "Boomerange":
-				return new Point2D(40, 40);
-			case "IceMonkey":
-				return new Point2D(40, 40);
-			case "NinjaMonkey":
-				return new Point2D(40, 40);
-			case "Painter":
-				return new Point2D(40, 40);
-			case "Sniper":
-				return new Point2D(40, 40);
-			case "Wizard":
-				return new Point2D(80,80);
-			case "SuperMonkey":
-				return new Point2D(40, 40);
-			default:
-				return new Point2D(40, 40); // 默认子弹宽度和高度
-		}
-	}
+	
 	
 	public void setPlaced(boolean placed) {
 		bulletIsPlaced = placed;
@@ -346,9 +378,9 @@ public class tower {
 		
     }
 	public void rotateTowards(double targetX, double targetY) {
-		Point2D startCoordinates = getStartCoordinates();
-        double startX = startCoordinates.getX();
-        double startY = startCoordinates.getY();
+		getStartCoordinates();
+        double startX = x;
+        double startY = y;
         double deltaX = targetX - startX;
         double deltaY = targetY - startY;
         double angle = Math.toDegrees(Math.atan2(deltaY, deltaX)) + 90;
