@@ -177,7 +177,7 @@ public class bloon {
         this.root=root;
 
         try {
-            Path filePath = Paths.get("resouce//svg.txt");
+            Path filePath = Paths.get(stage_menu.filePath);
             String content = Files.readString(filePath);
             this.path = new SVGPath();
             this.path.setContent(content);
