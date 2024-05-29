@@ -1,5 +1,7 @@
 package com.example;
 
+
+import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -25,6 +27,7 @@ import javafx.util.Duration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,11 +51,16 @@ public class Controller {
 
     @FXML
     private ImageView imageView = new ImageView();
+    @FXML
+    private ImageView HomeButton; 
+    @FXML
+    private ImageView HomeButton2; 
     private StackPane currentlyFollowing;
     private AnimationTimer timer;
 
     @FXML
-    private Button start;
+    private ImageView start;
+    
     @FXML
     private Button monkey;
     @FXML
@@ -86,22 +94,30 @@ public class Controller {
     private Label roundLabel;
     @FXML
     private Label costLabel; // 新增的顯示猴子價格的按鈕
+    @FXML
+    private Label EndLabel; // 新增的顯示猴子價格的按鈕
+    @FXML
+    private Label EndLabel2; // 新增的顯示猴子價格的按鈕
 
     @FXML
     private AnchorPane root;
+    @FXML
+    private AnchorPane game_over;
+    @FXML
+    private AnchorPane game_over2;
 
     public static int health = 100; // 血條初始值
     public static int money = 5000; // 金錢初始值
     private int round = 0; // 回合初始值
     private int cost = 0;
     private int totalRounds = 40; // 總回合數
-    private ImageView target; // 目標物
+    SoundPlayer game;
 
     private static List<tower> towers = new ArrayList<>();
     public static List<Projectile> projectiles = new ArrayList<>();
     public static List<bloon> bloons = new ArrayList<>();
     private List<String> levels = new ArrayList<>();
-    private ManualMap manualMap = new ManualMap("resouce\\gamemap\\Park.jpg");
+    private ManualMap manualMap = new ManualMap(stage_menu.manualmap);
     private static Controller instance;
 
     public Controller() {
@@ -114,11 +130,12 @@ public class Controller {
     @FXML
     private void initialize() {
         // play music
-        SoundPlayer game = new SoundPlayer("resouce\\sound\\Title Music.wav");
+        game = new SoundPlayer("resouce\\sound\\Title Music.wav");
         game.play(true);
         //讀關卡
         try {
-            Scanner scanner = new Scanner(new File("resouce//stage1.txt"));
+            //Scanner scanner = new Scanner(new File("resouce//stage1.txt"));
+            Scanner scanner = new Scanner(new File(stage_menu.stageBloon));
             totalRounds = scanner.nextInt();
             scanner.nextLine();
             while (scanner.hasNextLine()) {
@@ -134,7 +151,7 @@ public class Controller {
         root.setOnMouseClicked(this::handleMouseClicked);
 
         //start
-        start.setOnAction(event -> bloonStart());
+        start.setOnMouseClicked(event -> bloonStart());
 
         // 為每個按鈕設置事件處理程序
         
@@ -155,7 +172,6 @@ public class Controller {
        // monkey.setOnMouseReleased(event -> handleButtonRelease(monkey));
 
         // 初始化血條和目標物
-        updateHealthLabel();
         updateHealthLabel();
         updateMoneyLabel();
         updateRoundLabel();
@@ -224,12 +240,31 @@ public class Controller {
             currentIndex++;
             timeline.playFrom(Duration.millis(delay -1)); 
         }
+        else {
+            if(round==totalRounds)
+                checkWin();
+        }
     }
 
 
 
     private void updateHealthLabel() {
+        if(health<=0)   
+        {
+            game_over.setVisible(true);
+            game_over.toFront();
+            EndLabel.setText("Round:" + round);
+            HomeButton.setOnMouseClicked(event -> {
+            try {
+                resetGame();
+                Main.setRoot("menu");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        }
         healthLabel.setText(String.valueOf(health));
+        
     }
 
     private void updateMoneyLabel() {
@@ -252,7 +287,6 @@ public class Controller {
                 //rotateAllMonkeysTowardsTarget();
                 updateAllProjectiles();
                 updateHealthLabel();
-                //checkAndShootBullets();
                 for (tower t : towers) {
                     if(t.bulletIsPlaced == true){ 
                         if (t.towerType.equals("Banana Tree")) {
@@ -284,20 +318,7 @@ public class Controller {
             }
         }
     
-    
 
-    private void reduceHealth() {
-        if (health > 0) {
-            health--; // 血條減少1
-            updateHealthLabel(); // 更新顯示的血條數值
-        }
-    }
-
-    private void increaseMoney() {
-        money += 500; // 金錢增加1aa
-        updateMoneyLabel(); // 更新顯示的金錢數值
-        updateAllButtonStyles();
-    }
     public void increaseMoneyByAmount(int amount) {
         money += amount;
         updateMoneyLabel();
@@ -311,24 +332,6 @@ public class Controller {
     public void showMonkeyCost(String monkeyName, int cost) {
         String message = String.format("%s\nCost: %d", monkeyName, cost);
         costLabel.setText(message);
-    }
-
-    private void advanceRound() {
-        PauseTransition pause = new PauseTransition(Duration.seconds(3));
-        pause.setOnFinished(event -> {
-            round++; // 回合數增加
-            updateRoundLabel(); // 更新顯示的回合數
-            resetTarget(); // 重置目標物的位置和狀態
-            startTimer(); // 重啟計時器
-        });
-        pause.play();
-    }
-
-    private void resetTarget() {
-        // 重置目標物的位置
-        target.setLayoutX(0);
-        target.setLayoutY(0);
-        // 其他重置邏輯（如更新目標物的圖像等）可以在這裡添加
     }
 
     private void updateButtonStyle(Button button, boolean showOverlay, boolean isPressed) {
@@ -368,7 +371,7 @@ public class Controller {
             newTower.placeTower(root, x, y);
             currentlyFollowing = newTower.getTowerPane();
             showMonkeyCost(newTower.towerType, newTower.costValue);
-            System.out.println("Click on button, loading image: " + imagePath);
+            //System.out.println("Click on button, loading image: " + imagePath);
             updateButtonStyle(button, false,false);
         } else {
             System.out.println("Not enough money to place this tower.");
@@ -386,7 +389,7 @@ public class Controller {
                     newTower.switchToImage2();
                 else
                     newTower.switchToImage3();
-                System.out.println(event.getX() + " " + event.getY());
+                //System.out.println(event.getX() + " " + event.getY());
                 if (event.getX() > 950 && event.getY() < 50) {
                     towers.remove(newTower);
                     newTower.button.setVisible(false);
@@ -396,16 +399,11 @@ public class Controller {
                 }
                 updateMoneyLabel();
             });
-            
         }
     }
 
     private void handleMouseClicked(MouseEvent event) {
-        if (target != null && event.getTarget() == target) {
-            increaseMoney(); // 當目標物被點擊時增加金錢
-        }
         if (currentlyFollowing != null) { // 检测鼠标左键
-            System.out.println("click");
             if(manualMap.isPositionPlaceable(newTower.towerType,(int)event.getX(), (int) event.getY()))
             {
                 newTower.button.setVisible(false);
@@ -463,14 +461,12 @@ public class Controller {
                         t.getTowerPane().setLayoutY(t.getTowerPane().getLayoutY() - t.rangeRadius / 2 + t.imageheight/2);
                         t.button.toFront();
                     }
-                    System.out.println("click");
                     break;
                 }
                 else
                 {
                     if(t.getTowerPane().getChildren().contains(t.getTowerImageRange()))
                     {
-                        //newTower.setPlaced(true);
                         t.getTowerPane().getChildren().remove(t.getTowerImageRange());
                         t.getTowerPane().setLayoutX(t.getTowerPane().getLayoutX() + t.rangeRadius / 2 - t.imagewidth/2);
                         t.getTowerPane().setLayoutY(t.getTowerPane().getLayoutY() + t.rangeRadius / 2 - t.imageheight/2);
@@ -491,4 +487,65 @@ public class Controller {
     public static void removeBloon(bloon b) {
         bloons.remove(b);
     }
+
+    
+    public void checkWin() {
+        final Timeline[] checkTimeline = new Timeline[1];
+        checkTimeline[0] = new Timeline(new KeyFrame(Duration.seconds(3), event -> {
+            if (bloons.isEmpty()) {
+                if (health > 0) {
+                    game_over2.setVisible(true);
+                    game_over2.toFront();
+                    EndLabel2.setText("Round:" + round);
+                    HomeButton2.setOnMouseClicked(mouseEvent -> {
+                        try {
+                            resetGame();
+                            Main.setRoot("menu");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    checkTimeline[0].stop();
+                }
+            }
+        }));
+        checkTimeline[0].setCycleCount(Animation.INDEFINITE);
+        checkTimeline[0].play();
+    }
+
+    private void resetGame() {
+        // 停止动画计时器
+        if (timer != null) {
+            timer.stop();
+        }
+    
+        // 停止音乐
+        if (game != null) {
+            game.stop(); // 假设 SoundPlayer 类有一个 stop 方法
+        }
+        
+        // 清除所有塔和气球
+        for(bloon t:bloons)
+        {
+            t.transition.stop();
+        }
+        towers.clear();
+        bloons.clear();
+        projectiles.clear();
+    
+        // 移除所有UI组件
+        root.getChildren().clear();
+    
+        // 重置金钱、健康、回合等
+        health = 100;
+        money = 5000;
+        round = 0;
+    
+        // 更新标签显示
+        updateHealthLabel();
+        updateMoneyLabel();
+        updateRoundLabel();
+        updateCostLabel();
+    }
 }
+

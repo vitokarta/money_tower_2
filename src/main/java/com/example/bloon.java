@@ -41,12 +41,11 @@ public class bloon {
     public ImageView glueimage = new ImageView(GLUE);
     public Group imageGroup;
     private int health;
-    private int moneyValue;
     private double speed=0.5f;
     private double width;
     private double height;
     private SVGPath path;
-    private PathTransition transition;
+    public PathTransition transition;
     private PathTransition transition2;
     private AnchorPane root ;
     private double progress;
@@ -61,107 +60,63 @@ public class bloon {
         width = 40;
         height = 40;
         if (type.equals("R")) {
-			//health = 1;
-			//moneyValue = 2;
+			health = 1;
 			speed *= 1;
-			//width = ;
-			//height = (double)redbloonImage.getHeight(null);
 		}
 		else if (type.equals("B")) {
-			//health = 1;
-			//moneyValue = 3;
+		    health = 1;
 			speed *= 1.4;
-			//width = (double)bluebloonImage.getWidth(null);
-			//height = (double)bluebloonImage.getHeight(null);
 		}
 		else if (type.equals("G")) {
 			health = 1;
-			moneyValue = 4;
 			speed *= 1.8;
-			//width = (double)greenbloonImage.getWidth(null);
-			//height = (double)greenbloonImage.getHeight(null);
 		}
 		else if (type.equals("Y")) {
 			health = 1;
-			moneyValue = 5;
 			speed *= 3.2;
-			//width = (double)yellowbloonImage.getWidth(null);
-			//height = (double)yellowbloonImage.getHeight(null);
 		}
 		else if (type.equals("P")) {
 			health = 1;
-			moneyValue = 6;
 			speed *= 3.5;
-			//width = (double)pinkbloonImage.getWidth(null);
-			//height = (double)pinkbloonImage.getHeight(null);
 		}
 		else if (type.equals("Black")) {
 			health = 1;
-			moneyValue = 10;
 			speed *= 1.8;
-			//width = (double)blackbloonImage.getWidth(null);
-			//height = (double)blackbloonImage.getHeight(null);
-			//explosionImmunity = true;
 		}
 		else if (type.equals("White")) {
 			health = 1;
-			moneyValue = 10;
 			speed *= 2;
-			//width = (double)whitebloonImage.getWidth(null);
-			//height = (double)whitebloonImage.getHeight(null);
-			//freezeImmunity = true;
 		}
 		else if (type.equals("Camo")) {
 			health = 1;
-			moneyValue = 1;
 			speed *= 1;
-			//width = (double)camobloonImage.getWidth(null);
-			//height = (double)camobloonImage.getHeight(null);
 			Visible=false;
 		}
 		else if (type.equals("Lead")) {
 			health = 1;
-			moneyValue = 12;
 			speed *= 1;
-			//width = (double)leadbloonImage.getWidth(null);
-			//height = (double)leadbloonImage.getHeight(null);
 			sharpImmunity = true;
             glueable = false;
 		}
 		else if (type.equals("Zebra")) {
 			health = 1;
-			moneyValue = 13;
 			speed *= 1.8;
-			//width = (double)zebrabloonImage.getWidth(null);
-			//height = (double)zebrabloonImage.getHeight(null);
-			//explosionImmunity = true;
-			//freezeImmunity = true;
 		}
 		else if (type.equals("Rainbow")) {
 			health = 1;
-			moneyValue = 15;
 			speed *= 2.2;
-			//width = (double)rainbowbloonImage.getWidth(null);
-			//height = (double)rainbowbloonImage.getHeight(null);
 		}
 		else if (type.equals("Ceramic")) {
 			health = 10;
-			moneyValue = 0;
 			speed *= 2.5;
-			//width = (double)ceramicbloonImage.getWidth(null);
-			//height = (double)ceramicbloonImage.getHeight(null);
 			glueable = false;
 
 		}
 		else if (type.equals("MOAB")) {
 			health = 200;
-			moneyValue = 200;
 			speed *= 1;
             width = MOAB.getWidth();
 			height = MOAB.getHeight();
-			//width = (double)MOABbloonImage.getWidth(null);
-			//height = (double)MOABbloonImage.getHeight(null);
-			//freezeImmunity = true;
 			glueable = false;
 		}
         this.imageView = new ImageView(getbloonImage(type));
@@ -177,7 +132,7 @@ public class bloon {
         this.root=root;
 
         try {
-            Path filePath = Paths.get("resouce//svg.txt");
+            Path filePath = Paths.get(stage_menu.filePath);
             String content = Files.readString(filePath);
             this.path = new SVGPath();
             this.path.setContent(content);
@@ -222,7 +177,6 @@ public class bloon {
         transition.setInterpolator(Interpolator.LINEAR);
         transition.jumpTo(Duration.millis(10000 / this.speed *2 * progress));
         transition.setOnFinished((ActionEvent event) -> {
-            breakIntobloons(type);
             root.getChildren().remove(imageView);
             Controller.health-=TypeToHealth(type);
             Controller.removeBloon(this);
@@ -349,6 +303,12 @@ public class bloon {
                 Controller.bloons.add(bloon);
                 newBloons.add(bloon);
                 bloon = new bloon("Ceramic", root, progress+0.001);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
+                bloon = new bloon("Ceramic", root, progress+0.002);
+                Controller.bloons.add(bloon);
+                newBloons.add(bloon);
+                bloon = new bloon("Ceramic", root, progress+0.003);
                 Controller.bloons.add(bloon);
                 newBloons.add(bloon);
                 break;

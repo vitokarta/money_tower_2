@@ -166,10 +166,21 @@ public class tower {
         
         towerPane.getChildren().addAll(towerImageRange, towerImageView); // Add both images to the StackPane
 
-        button = new Button("sell");
-        button.setLayoutX(890);
-        button.setLayoutY(570);
+		
+        // 创建ImageView
+		
+		Image image = new Image("file:@..//..//resouce//sell.png");
+        ImageView imageView2 = new ImageView(image);
+        button = new Button();
+		imageView2.setFitWidth(116);
+		imageView2.setFitHeight(60);
+		button.setGraphic(imageView2);
+        button.setLayoutX(864);
+        button.setLayoutY(533);
+		button.setPrefWidth(96); // 设置按钮宽度
+		button.setPrefHeight(60); // 设置按钮高度
 		button.setUserData(this);
+		button.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
 		root.getChildren().add(button);
 		
         button.setOnAction(event1 -> {
@@ -179,7 +190,7 @@ public class tower {
 				button.setVisible(false);
 				Controller.removeTower(this); // 移除 tower 实例
 				ManualMap.restoreMap(this);
-				System.out.println(this.towerType);
+				//System.out.println(this.towerType);
 				Controller.getInstance().increaseMoneyByAmount(this.sellValue); // 增加金錢數值
         	}
         });

@@ -33,7 +33,7 @@ public class menu {
     }
     @FXML
     private void switchToStageMenu() throws IOException {
-        test.setRoot("stage_menu");
+        Main.setRoot("stage_menu");
     }
     @FXML
     private void hover() {

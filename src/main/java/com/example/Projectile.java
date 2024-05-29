@@ -86,70 +86,7 @@ public class Projectile {
         
         
     }
-    /*public Projectile(AnchorPane root, tower tower, double targetX, double targetY, int speed,  int rangeRadius) {
-        this.tower = tower;
-        this.towerType = tower.towerType;
-        String imagePath = getProjectileImagePath();
-        try {
-            Image image = new Image(new FileInputStream(imagePath));
-            projectileImageView = new ImageView(image);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        Point2D projectileSize = getProjectileSize();
-        double projectileWidth = projectileSize.getX();
-        double projectileHeight = projectileSize.getY();
-        projectileImageView.setFitWidth(projectileWidth);
-        projectileImageView.setFitHeight(projectileHeight);
-
-        tower.getStartCoordinates();
-        double startX = tower.x;
-        double startY = tower.y;
-        projectileImageView.setLayoutX(startX - projectileWidth / 2);
-        projectileImageView.setLayoutY(startY - projectileHeight / 2);
-        root.getChildren().add(projectileImageView);
-
-        this.speed = speed;
-        this.rangeRadius = rangeRadius;
-        double deltaX = targetX - startX;
-        double deltaY = targetY - startY;
-        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        directionX = deltaX / distance;
-        directionY = deltaY / distance;
-        distanceTravelled = 0;
-
-        rotateTowards(targetX, targetY);
-    }
-    // for snagtower
-    public Projectile(AnchorPane root, tower tower, double startX, double startY, double directionX, double directionY, int speed, int rangeRadius) {
-        this.tower = tower;
-        this.towerType = tower.towerType;
-        String imagePath = getProjectileImagePath();
-        try {
-            Image image = new Image(new FileInputStream(imagePath));
-            projectileImageView = new ImageView(image);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        Point2D projectileSize = getProjectileSize();
-        double projectileWidth = projectileSize.getX();
-        double projectileHeight = projectileSize.getY();
-        projectileImageView.setFitWidth(projectileWidth);
-        projectileImageView.setFitHeight(projectileHeight);
-        projectileImageView.setLayoutX(startX - projectileWidth / 2);
-        projectileImageView.setLayoutY(startY - projectileHeight / 2);
-        root.getChildren().add(projectileImageView);
-
-        this.speed = speed;
-        this.rangeRadius = rangeRadius;
-        double distance = Math.sqrt(directionX * directionX + directionY * directionY);
-        this.directionX = directionX / distance;
-        this.directionY = directionY / distance;
-        distanceTravelled = 0;
-
-        rotateTowards(startX + directionX * rangeRadius, startY + directionY * rangeRadius);
-    }*/
+    
     private Set<bloon> collidedBloons= new HashSet<>();; // 記錄已碰撞的氣球
     public void checkForCollision(List<bloon> bloonsList, AnchorPane root) {
         if(isBanana && (tower.towerType == "Banana Tree")) return;
@@ -223,7 +160,7 @@ public class Projectile {
             case "Snag":
                 return "resouce\\bullet\\snag.png"; // 更改为实际的图片路径
             case "Battleship":
-                return "resouce\\bullet\\bomb.png";
+                return "resouce\\bullet\\dart.png";
             case "Cannon":
                 return "resouce\\bullet\\bomb.png";
             case "Boomerange":
@@ -266,34 +203,24 @@ public class Projectile {
                 return new Point2D(40, 40); // 默认子弹宽度和高度
         }
     }
-    /*public void move() {
-        projectileImageView.setLayoutX(projectileImageView.getLayoutX() + directionX * speed);
-        projectileImageView.setLayoutY(projectileImageView.getLayoutY() + directionY * speed);
-        distanceTravelled += speed;
-        
-        if (distanceTravelled > rangeRadius) {
-            isRemoved = true;
-        }
-        if (isBanana) {
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - creationTime > lifespan) {
-                if (distanceTravelled > rangeRadius) {
-                isRemoved = true;
-                System.out.println("Banana is removed. Increasing money by: " + tower.moneyRate);
-                Controller.getInstance().increaseMoneyByAmount(tower.moneyRate);
-                }
-            }
-        }
-        
-    }*/
+
+
+    private boolean isrotate=false;
+    private int cun=0;
     public void move() {
         if (!isBanana || (isBanana && distanceTravelled <= rangeRadius/2)) {
             projectileImageView.setLayoutX(projectileImageView.getLayoutX() + directionX * speed);
             projectileImageView.setLayoutY(projectileImageView.getLayoutY() + directionY * speed);
             distanceTravelled += speed;
+            if(tower.towerType.equals("Boomerange") || tower.towerType.equals("NinjaMonkey"))
+                projectileImageView.setRotate(cun+=10);
         }
-
-        if (!isBanana && distanceTravelled > rangeRadius *0.75) {
+        if (!isrotate && tower.towerType.equals("Boomerange") && distanceTravelled > rangeRadius /2) {
+            this.directionX *= -1;
+            this.directionY *= -1;
+            isrotate=true;
+        }
+        if (!isBanana && distanceTravelled > rangeRadius ) {
             isRemoved = true;
         }
 
@@ -305,13 +232,6 @@ public class Projectile {
                 isRemoved = true;
             }
         }
-        /*if(isBanana && tower.towerType == "SnagTower" && distanceTravelled >= rangeRadius/2) {
-            directionX = 0;
-            directionY = 0;
-            if (System.currentTimeMillis() - creationTime > lifespan) {
-                isRemoved = true;
-            }
-        }*/
     }
     
     public ImageView getProjectileImageView() {

@@ -51,8 +51,15 @@ public class SoundPlayer {
                     }
                 }).start();
             }
+            
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    public void stop() {
+        if (clip != null) {
+            clip.stop();
+            clip.setFramePosition(0);
         }
     }
 }
