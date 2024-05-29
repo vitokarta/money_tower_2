@@ -6,7 +6,7 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 
 public class stage_menu {
-    private static final ImageView backward_button = new ImageView(new Image("file:@..//..//resouce//backward.png"));
+    public static final ImageView backward_button = new ImageView(new Image("file:@..//..//resouce//backward.png"));
     private static final ImageView hovered_backward_button = new ImageView(new Image("file:@..//..//resouce//backward_hovered.png"));
     private static final ImageView stage1 = new ImageView(new Image("file:@..//..//resouce//file_Object Removal.jpg"));
     @FXML

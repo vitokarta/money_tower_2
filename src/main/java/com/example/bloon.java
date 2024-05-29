@@ -222,6 +222,7 @@ public class bloon {
         transition.setInterpolator(Interpolator.LINEAR);
         transition.jumpTo(Duration.millis(10000 / this.speed *2 * progress));
         transition.setOnFinished((ActionEvent event) -> {
+            breakIntobloons(type);
             root.getChildren().remove(imageView);
             Controller.health-=TypeToHealth(type);
             Controller.removeBloon(this);

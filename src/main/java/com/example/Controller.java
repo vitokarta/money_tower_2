@@ -90,8 +90,8 @@ public class Controller {
     @FXML
     private AnchorPane root;
 
-    public static int health = 500; // 血條初始值
-    public static int money = 25000; // 金錢初始值
+    public static int health = 100; // 血條初始值
+    public static int money = 5000; // 金錢初始值
     private int round = 0; // 回合初始值
     private int cost = 0;
     private int totalRounds = 40; // 總回合數
@@ -243,15 +243,6 @@ public class Controller {
     private void updateCostLabel() {
         costLabel.setText("Cost:" + cost);
     }
-    /*private void initializeTarget() {
-        // 初始化目標物(之後要考慮多顆氣球，或是那個點有氣球經過再做氣球類別判斷來扣血)
-        target = new ImageView("file:/C:/Users/Edward%20Liao/Desktop/tower/money_tower_2/resouce/bloon.png");
-        target.setFitWidth(50);
-        target.setFitHeight(50);
-        target.setLayoutX(0);
-        target.setLayoutY(0);
-        root.getChildren().add(target);
-    }*/
 
     private void startTimer() {
         timer = new AnimationTimer() {
@@ -290,74 +281,8 @@ public class Controller {
         for(tower t : towers){
             t.attackDelayCounter++;
             t.checkIfCanAddProjectile(root,bloons);
-            /*if (t.isTargetInRange(targetX, targetY)) {
-                if (t.towerType.equals("Snag")) { // 检查 tower 类型是否为置钉器
-                    t.shootInAllDirections(root);
-                }
-                else t.shoot(root, targetX, targetY);
-                if (!t.towerType.equals("Snag") && !t.towerType.equals("Banana Tree")) {
-                    t.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
-                    }*/
             }
         }
-        
-    
-    
-
-
-    
-
-    /*private void checkAndShootBullets() {
-
-        for (tower t : towers) {
-            double towerCenterX = t.getTowerPane().getLayoutX() + t.getTowerImageView().getFitWidth() / 2;
-            double towerCenterY = t.getTowerPane().getLayoutY() + t.getTowerImageView().getFitHeight() / 2;
-            double targetCenterX = target.getLayoutX() + target.getFitWidth() / 2;
-            double targetCenterY = target.getLayoutY() + target.getFitHeight() / 2;
-
-            double distance = Math.sqrt(Math.pow(targetCenterX - towerCenterX, 2) + Math.pow(targetCenterY - towerCenterY, 2));
-            
-            if (distance <= t.rangeRadius) {
-                t.shootBullet(targetCenterX, targetCenterY, root);
-            }
-        }
-    }*/
-    /*private void checkTargetPosition() {
-        double x = target.getLayoutX();
-        double y = target.getLayoutY();
-        double speed = 1.0; // 目标物移动的速度
-    
-        // 更新目标物的位置
-        Platform.runLater(() -> {
-            // Z字形路径
-            if (x < 200 && y == 0) {  // 向右移动
-                target.setLayoutX(x + speed);
-            } else if (x >= 200 && y < 150) {  // 向下移动
-                target.setLayoutY(y + speed);
-            } else if (x > 0 && y >= 150 && y < 300) {  // 向左移动
-                target.setLayoutX(x - speed);
-            } else if (x == 0 && y >= 150 && y < 300) {  // 向下移动
-                target.setLayoutY(y + speed);
-            } else if (x < 300 && y == 300) {  // 向右移动
-                target.setLayoutX(x + speed);
-            } else if (x >= 300 && y < 450) {  // 向下移动
-                target.setLayoutY(y + speed);
-            } else if (x > 100 && y >= 450) {  // 向左移动
-                target.setLayoutX(x - speed);
-            } else if (x <= 100 && y >= 450 && y < 600) {  // 向下移动
-                target.setLayoutY(y + speed);
-            }
-        });
-    }*/
-    
-
-    /*private void rotateAllMonkeysTowardsTarget() {
-        for (tower t : towers) {
-            if (!t.towerType.equals("Snag") && !t.towerType.equals("Banana Tree")) {
-            t.rotateTowards(target.getLayoutX()+target.getFitWidth()/2, target.getLayoutY()+target.getFitHeight()/2);
-            }
-        }
-    }*/
     
     
 
