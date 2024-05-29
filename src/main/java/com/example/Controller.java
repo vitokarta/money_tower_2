@@ -91,7 +91,7 @@ public class Controller {
     private AnchorPane root;
 
     public static int health = 500; // 血條初始值
-    public static int money = 25000; // 金錢初始值
+    public static int money = 9999; // 金錢初始值
     private int round = 0; // 回合初始值
     private int cost = 0;
     private int totalRounds = 40; // 總回合數
@@ -368,11 +368,7 @@ public class Controller {
         }
     }
 
-    private void increaseMoney() {
-        money += 500; // 金錢增加1aa
-        updateMoneyLabel(); // 更新顯示的金錢數值
-        updateAllButtonStyles();
-    }
+    
     public void increaseMoneyByAmount(int amount) {
         money += amount;
         updateMoneyLabel();
@@ -476,9 +472,6 @@ public class Controller {
     }
 
     private void handleMouseClicked(MouseEvent event) {
-        if (target != null && event.getTarget() == target) {
-            increaseMoney(); // 當目標物被點擊時增加金錢
-        }
         if (currentlyFollowing != null) { // 检测鼠标左键
             System.out.println("click");
             if(manualMap.isPositionPlaceable(newTower.towerType,(int)event.getX(), (int) event.getY()))

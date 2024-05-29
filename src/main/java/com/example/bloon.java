@@ -61,14 +61,14 @@ public class bloon {
         width = 40;
         height = 40;
         if (type.equals("R")) {
-			//health = 1;
+			health = 1;
 			//moneyValue = 2;
 			speed *= 1;
 			//width = ;
 			//height = (double)redbloonImage.getHeight(null);
 		}
 		else if (type.equals("B")) {
-			//health = 1;
+			health = 1;
 			//moneyValue = 3;
 			speed *= 1.4;
 			//width = (double)bluebloonImage.getWidth(null);
@@ -253,7 +253,7 @@ public class bloon {
             
             newBloons=breakIntobloons(HealthToType(TypeToHealth(type)+health));
             isRemoved = true;
-            Controller.getInstance().increaseMoneyByAmount(1);
+            Controller.getInstance().increaseMoneyByAmount(Math.abs(health) + 1);
             root.getChildren().remove(imageView);
             this.transition.stop();
             if(root.getChildren().contains(glueimage))
@@ -261,7 +261,7 @@ public class bloon {
                 root.getChildren().remove(glueimage);
                 transition2.stop();
             }
-            //ystem.out.println(cun++);
+            
         }
         return newBloons;
     }

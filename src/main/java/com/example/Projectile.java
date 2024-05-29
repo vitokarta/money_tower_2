@@ -27,7 +27,7 @@ public class Projectile {
     public double speed;
     public double directionX;
     public double directionY;
-    public int attack = 2;
+    public int attack = 1;
     public int health;
     public double distanceTravelled;
     public double rangeRadius;
@@ -37,7 +37,7 @@ public class Projectile {
     private boolean isBanana;
     private long creationTime;
     private long lifespan = 10000; // 香蕉存在时间为2000毫秒（2秒）
-    public int durability=2;
+    public int durability = 1;
     private SoundPlayer ceramicBloonHit = new SoundPlayer("resouce\\sound\\Ceramic_damage.wav");
 	private SoundPlayer pop = new SoundPlayer("resouce\\sound\\Bloon_Pop.wav");
     // constructor contains angle
@@ -221,9 +221,9 @@ public class Projectile {
             case "Monkey":
                 return "resouce\\bullet\\dart.png";
             case "Snag":
-                return "resouce\\bullet\\snag.png"; // 更改为实际的图片路径
+                return "resouce\\bullet\\snag.png"; 
             case "Battleship":
-                return "resouce\\bullet\\bomb.png";
+                return "resouce\\bullet\\dart.png";
             case "Cannon":
                 return "resouce\\bullet\\bomb.png";
             case "Boomerange":
@@ -286,14 +286,22 @@ public class Projectile {
         }
         
     }*/
+    private boolean isrotate=false;
+    private int cun=0;
     public void move() {
         if (!isBanana || (isBanana && distanceTravelled <= rangeRadius/2)) {
             projectileImageView.setLayoutX(projectileImageView.getLayoutX() + directionX * speed);
             projectileImageView.setLayoutY(projectileImageView.getLayoutY() + directionY * speed);
             distanceTravelled += speed;
+            if(tower.towerType.equals("Boomerange") || tower.towerType.equals("NinjaMonkey") || tower.towerType.equals("Monkey"))
+                projectileImageView.setRotate(cun+=10);
         }
-
-        if (!isBanana && distanceTravelled > rangeRadius *0.75) {
+        if (!isrotate && tower.towerType.equals("Boomerange") && distanceTravelled > rangeRadius /2) {
+            this.directionX *= -1;
+            this.directionY *= -1;
+            isrotate=true;
+        }
+        if (!isBanana && distanceTravelled > rangeRadius ) {
             isRemoved = true;
         }
 
