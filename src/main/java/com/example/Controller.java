@@ -118,7 +118,7 @@ public class Controller {
         game.play(true);
         //讀關卡
         try {
-            Scanner scanner = new Scanner(new File("resouce//stage1.txt"));
+            Scanner scanner = new Scanner(new File(stage_menu.stageBloon));
             totalRounds = scanner.nextInt();
             scanner.nextLine();
             while (scanner.hasNextLine()) {

@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 public class stage_menu {
     public static String filePath = "resouce//path//svgStage";
     public static String manualmap = "resouce//gamemap//ManualMap";
+    public static String stageBloon = "resouce//stage_bloon//stage";
 
 
     private static final ImageView backward_button = new ImageView(new Image("file:/C://Users//maste//OneDrive//桌面//JAVA_project//money_tower_2//resouce//backward.png"));
@@ -105,21 +106,25 @@ public class stage_menu {
     private void switchToStage1() throws IOException {
         filePath = filePath + "1.txt";
         manualmap = manualmap + "1.jpg";
+        stageBloon = stageBloon + "1.txt";
         test.setRoot("scene");
     }
     private void switchToStage2() throws IOException {
         filePath = filePath + "2.txt";
         manualmap = manualmap + "2.jpg";
+        stageBloon = stageBloon + "2.txt";
         test.setRoot("scene2");
     }
     private void switchToStage3() throws IOException {
         filePath = filePath + "3.txt";
         manualmap = manualmap + "3.jpg";
-        test.setRoot("scene");
+        stageBloon = stageBloon + "3.txt";
+        test.setRoot("scene3");
     }
     private void switchToStage4() throws IOException {
         filePath = filePath + "4.txt";
         manualmap = manualmap + "4.jpg";
+        stageBloon = stageBloon + "4.txt";
         test.setRoot("scene4");
     }
     @FXML
