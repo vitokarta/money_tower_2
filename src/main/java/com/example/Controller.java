@@ -101,7 +101,7 @@ public class Controller {
     public static List<Projectile> projectiles = new ArrayList<>();
     public static List<bloon> bloons = new ArrayList<>();
     private List<String> levels = new ArrayList<>();
-    private ManualMap manualMap = new ManualMap("resouce\\map1.jpg");
+    private ManualMap manualMap = new ManualMap("resouce\\gamemap\\Park.jpg");
     private static Controller instance;
 
     public Controller() {
