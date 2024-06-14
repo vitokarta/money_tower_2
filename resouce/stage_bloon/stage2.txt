@@ -1,5 +1,6 @@
-4
-20 R 20
-10 B 10
-20 P 20
-20 R 5 B 5 P 5 Camo 4 MOAB 1
+5
+100 P 100
+20 Camo 20
+15 Lead 10
+15 Ceramic 10
+2 MOAB 2
